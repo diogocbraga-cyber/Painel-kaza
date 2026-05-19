@@ -7,43 +7,52 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; overflow: hidden; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #fff; display: flex; flex-direction: column; padding: 0.6rem; }
-  .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem; flex-shrink: 0; }
-  .logo { font-size: 18px; font-weight: 600; letter-spacing: 1px; color: #e0e0e0; }
-  .clock { font-size: 14px; color: #aaa; }
-  button { font-size: 12px; padding: 5px 12px; border: 1px solid #444; border-radius: 6px; background: transparent; cursor: pointer; color: #aaa; }
-  button:hover { background: #333; color: #fff; }
-  .grid { display: grid; grid-template-columns: 160px repeat(3, 1fr); gap: 6px; flex: 1; overflow: hidden; }
-  .col-header { display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; padding: 10px; }
-  .col-header .day-name { font-size: 17px; font-weight: 600; }
-  .col-header .day-date { font-size: 13px; color: #aaa; margin-top: 2px; }
-  .col-header.today { background: #16213e; border: 1px solid #0f3460; }
-  .col-header.other { background: #16213e; border: 1px solid #2a2a4a; }
-  .apt-name { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 0 10px; border-radius: 10px; background: #16213e; border: 1px solid #2a2a4a; }
-  .apt-building { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
-  .apt-unit { font-size: 17px; font-weight: 600; color: #e0e0e0; }
-  .cell { display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; background: #16213e; border: 1px solid #2a2a4a; gap: 4px; padding: 6px; }
-  .cell.today-col { border-color: #0f3460; }
-  .cell.empty { opacity: 0.3; }
-  .event { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; width: 100%; }
-  .arrow-out { font-size: 18px; color: #ff6b6b; line-height: 1; }
-  .arrow-in { font-size: 18px; color: #51cf66; line-height: 1; }
-  .event-time { font-size: 14px; color: #ddd; display: flex; align-items: center; gap: 3px; }
-  .event-guests { font-size: 14px; color: #ddd; display: flex; align-items: center; gap: 3px; }
-  .divider { width: 60%; height: 1px; background: #2a2a4a; }
-  .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #1a1a2e; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #aaa; z-index: 100; }
-  .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #51cf66; margin-right: 6px; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f1a; color: #fff; display: flex; flex-direction: column; padding: 0.5rem; gap: 0.4rem; }
+  .top { display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .logo { font-size: 16px; font-weight: 600; color: #e0e0e0; }
+  .clock { font-size: 13px; color: #aaa; display: flex; align-items: center; gap: 6px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: #51cf66; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .nav { display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; }
+  .nav button { font-size: 13px; padding: 4px 12px; border: 1px solid #333; border-radius: 6px; background: #16213e; cursor: pointer; color: #ccc; }
+  .nav button:hover { background: #1e2d50; color: #fff; }
+  .nav-dates { display: flex; gap: 6px; }
+  .nav-date { font-size: 13px; padding: 4px 14px; border-radius: 6px; background: #16213e; border: 1px solid #2a2a4a; color: #aaa; cursor: pointer; transition: all 0.2s; }
+  .nav-date.active { background: #1e3a6e; border-color: #4a7adf; color: #fff; font-weight: 600; }
+  .grid { display: grid; grid-template-columns: 150px repeat(3, 1fr); gap: 5px; flex: 1; overflow: hidden; }
+  .col-header { display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; padding: 6px; }
+  .col-header.today { background: #16213e; border: 1px solid #1e3a6e; }
+  .col-header.other { background: #16213e; border: 1px solid #222; }
+  .col-header .day-name { font-size: 16px; font-weight: 600; }
+  .col-header .day-date { font-size: 12px; color: #aaa; margin-top: 1px; }
+  .apt-name { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 0 8px; border-radius: 8px; background: #16213e; border: 1px solid #222; }
+  .apt-building { font-size: 11px; color: #777; text-transform: uppercase; letter-spacing: 0.5px; }
+  .apt-unit { font-size: 15px; font-weight: 600; color: #ddd; }
+  .cell { display: flex; flex-direction: row; align-items: center; justify-content: center; border-radius: 8px; background: #16213e; border: 1px solid #222; gap: 8px; padding: 6px 8px; }
+  .cell.today-col { border-color: #1e3a6e; }
+  .cell.empty { opacity: 0.2; }
+  .half { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex: 1; }
+  .half-divider { width: 1px; height: 70%; background: #2a2a4a; flex-shrink: 0; }
+  .arrow-out { font-size: 24px; color: #ff6b6b; line-height: 1; }
+  .arrow-in { font-size: 24px; color: #51cf66; line-height: 1; }
+  .info-line { font-size: 19px; color: #ccc; display: flex; align-items: center; gap: 2px; white-space: nowrap; }
+  .dash { font-size: 20px; color: #333; }
+  .refresh-btn { font-size: 12px; padding: 4px 10px; border: 1px solid #333; border-radius: 6px; background: transparent; cursor: pointer; color: #888; }
+  .refresh-btn:hover { color: #fff; }
 </style>
 </head>
 <body>
 
-<div id="loading-overlay" class="loading-overlay">Carregando...</div>
-
 <div class="top">
   <div class="logo">&#127968; Kaza Capixaba</div>
-  <div class="clock"><span class="dot"></span><span id="clock-time"></span></div>
-  <button onclick="loadData()">&#8635; Atualizar</button>
+  <div class="clock"><div class="dot"></div><span id="clock-time"></span></div>
+  <button class="refresh-btn" onclick="loadData()">&#8635; Atualizar</button>
+</div>
+
+<div class="nav">
+  <button onclick="shiftDays(-1)">&#8592; Anterior</button>
+  <div class="nav-dates" id="nav-dates"></div>
+  <button onclick="shiftDays(1)">Proximo &#8594;</button>
 </div>
 
 <div id="grid" class="grid"></div>
@@ -51,6 +60,7 @@
 <script>
 var AUTH = 'Basic ' + btoa('fda28ed1:8ae477dc');
 var DOMAIN = 'dccb.stays.net';
+var offset = 0;
 
 var APTS = [
   { id: '671d529a8796a56f531629bb', building: 'Wave', unit: '1202 Norte' },
@@ -64,8 +74,7 @@ var APTS = [
 
 function todayStr() {
   var now = new Date();
-  var offset = now.getTimezoneOffset();
-  var local = new Date(now.getTime() - (offset * 60000));
+  var local = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
   return local.toISOString().split('T')[0];
 }
 
@@ -76,8 +85,8 @@ function addDays(dateStr, n) {
 }
 
 function formatDate(d) {
-  var parts = d.split('-');
-  return parts[2] + '/' + parts[1];
+  var p = d.split('-');
+  return p[2] + '/' + p[1];
 }
 
 function dayName(dateStr) {
@@ -86,7 +95,13 @@ function dayName(dateStr) {
   var names = ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
   if (dateStr === today) return 'Hoje';
   if (dateStr === addDays(today, 1)) return 'Amanha';
+  if (dateStr === addDays(today, -1)) return 'Ontem';
   return names[d.getUTCDay()];
+}
+
+function shiftDays(n) {
+  offset += n;
+  loadData();
 }
 
 async function fetchWithProxy(apiUrl) {
@@ -114,13 +129,21 @@ function updateClock() {
 
 async function loadData() {
   var today = todayStr();
-  var d1 = addDays(today, 1);
-  var d2 = addDays(today, 2);
-  var days = [today, d1, d2];
+  var base = addDays(today, offset);
+  var d0 = base;
+  var d1 = addDays(base, 1);
+  var d2 = addDays(base, 2);
+  var days = [d0, d1, d2];
+
+  var navHtml = '';
+  for (var i = 0; i < 3; i++) {
+    navHtml += '<div class="nav-date' + (i === 0 ? ' active' : '') + '">' + dayName(days[i]) + ' ' + formatDate(days[i]) + '</div>';
+  }
+  document.getElementById('nav-dates').innerHTML = navHtml;
 
   var results = await Promise.all([
-    fetchWithProxy('https://' + DOMAIN + '/external/v1/booking/reservations?from=' + today + '&to=' + today + '&dateType=departure&limit=20'),
-    fetchWithProxy('https://' + DOMAIN + '/external/v1/booking/reservations?from=' + today + '&to=' + today + '&dateType=arrival&limit=20'),
+    fetchWithProxy('https://' + DOMAIN + '/external/v1/booking/reservations?from=' + d0 + '&to=' + d0 + '&dateType=departure&limit=20'),
+    fetchWithProxy('https://' + DOMAIN + '/external/v1/booking/reservations?from=' + d0 + '&to=' + d0 + '&dateType=arrival&limit=20'),
     fetchWithProxy('https://' + DOMAIN + '/external/v1/booking/reservations?from=' + d1 + '&to=' + d1 + '&dateType=departure&limit=20'),
     fetchWithProxy('https://' + DOMAIN + '/external/v1/booking/reservations?from=' + d1 + '&to=' + d1 + '&dateType=arrival&limit=20'),
     fetchWithProxy('https://' + DOMAIN + '/external/v1/booking/reservations?from=' + d2 + '&to=' + d2 + '&dateType=departure&limit=20'),
@@ -133,15 +156,15 @@ async function loadData() {
     { out: results[4], inn: results[5] }
   ];
 
+  var totalRows = APTS.length + 1;
+  var aptH = 'calc((100vh - 80px) / ' + totalRows + ')';
+
   var grid = document.getElementById('grid');
-  var html = '';
+  var html = '<div class="col-header" style="height:' + aptH + '"></div>';
 
-  var aptHeight = 'calc((100vh - 80px) / ' + (APTS.length + 1) + ')';
-
-  html += '<div class="col-header" style="height:' + aptHeight + '"></div>';
   for (var d = 0; d < 3; d++) {
-    var isToday = d === 0;
-    html += '<div class="col-header ' + (isToday ? 'today' : 'other') + '" style="height:' + aptHeight + '">' +
+    var isToday = days[d] === today;
+    html += '<div class="col-header ' + (isToday ? 'today' : 'other') + '" style="height:' + aptH + '">' +
       '<div class="day-name">' + dayName(days[d]) + '</div>' +
       '<div class="day-date">' + formatDate(days[d]) + '</div>' +
     '</div>';
@@ -149,7 +172,7 @@ async function loadData() {
 
   for (var a = 0; a < APTS.length; a++) {
     var apt = APTS[a];
-    html += '<div class="apt-name" style="height:' + aptHeight + '">' +
+    html += '<div class="apt-name" style="height:' + aptH + '">' +
       '<div class="apt-building">' + apt.building + '</div>' +
       '<div class="apt-unit">' + apt.unit + '</div>' +
     '</div>';
@@ -164,30 +187,30 @@ async function loadData() {
       }
 
       var isEmpty = !checkout && !checkin;
-      var cellClass = 'cell' + (d === 0 ? ' today-col' : '') + (isEmpty ? ' empty' : '');
-      html += '<div class="' + cellClass + '" style="height:' + aptHeight + '">';
+      var cellClass = 'cell' + (days[d] === today ? ' today-col' : '') + (isEmpty ? ' empty' : '');
+      html += '<div class="' + cellClass + '" style="height:' + aptH + '">';
 
       if (checkout) {
-        html += '<div class="event">' +
-          '<span class="arrow-out">&#8679;</span>' +
-          '<span class="event-time">&#128336; ' + (checkout.checkOutTime || '--') + '</span>' +
+        html += '<div class="half">' +
+          '<div class="arrow-out">&#8679;</div>' +
+          '<div class="info-line">&#128336; ' + (checkout.checkOutTime || '--') + '</div>' +
         '</div>';
       }
 
       if (checkout && checkin) {
-        html += '<div class="divider"></div>';
+        html += '<div class="half-divider"></div>';
       }
 
       if (checkin) {
-        html += '<div class="event">' +
-          '<span class="arrow-in">&#8681;</span>' +
-          '<span class="event-time">&#128336; ' + (checkin.checkInTime || '--') + '</span>' +
-          '<span class="event-guests">&#128101; ' + (checkin.guests || '--') + '</span>' +
+        html += '<div class="half">' +
+          '<div class="arrow-in">&#8681;</div>' +
+          '<div class="info-line">&#128336; ' + (checkin.checkInTime || '--') + '</div>' +
+          '<div class="info-line">&#128101; ' + (checkin.guests || '--') + '</div>' +
         '</div>';
       }
 
       if (isEmpty) {
-        html += '<div style="font-size:18px; color:#333;">&#8212;</div>';
+        html += '<div class="dash">&#8212;</div>';
       }
 
       html += '</div>';
@@ -195,7 +218,6 @@ async function loadData() {
   }
 
   grid.innerHTML = html;
-  document.getElementById('loading-overlay').style.display = 'none';
 }
 
 updateClock();
