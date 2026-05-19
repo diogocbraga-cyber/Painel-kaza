@@ -3,69 +3,67 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Painel de Movimentacao</title>
+<title>Painel Kaza Capixaba</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f0; color: #1a1a1a; padding: 2rem; }
-  h1 { font-size: 24px; font-weight: 500; margin-bottom: 4px; }
-  .subtitle { font-size: 14px; color: #666; margin-bottom: 1.5rem; }
-  .header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; }
-  button { display: flex; align-items: center; gap: 6px; font-size: 14px; padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; background: white; cursor: pointer; color: #333; }
-  button:hover { background: #f0f0f0; }
-  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 2rem; }
-  .card { background: white; border-radius: 10px; padding: 1rem; text-align: center; }
-  .card-label { font-size: 13px; color: #666; margin-bottom: 4px; }
-  .card-value { font-size: 28px; font-weight: 500; }
-  .day-section { margin-bottom: 2rem; }
-  .day-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-  .day-title { font-size: 16px; font-weight: 500; }
-  .day-date { font-size: 13px; color: #666; }
-  .today-badge { font-size: 12px; padding: 2px 8px; border-radius: 6px; background: #e8f0fe; color: #1a73e8; }
-  .event { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: white; border: 1px solid #eee; border-radius: 8px; margin-bottom: 8px; }
-  .event-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
-  .event-icon.checkin { background: #e6f4ea; color: #1e8e3e; }
-  .event-icon.checkout { background: #fef7e0; color: #f29900; }
-  .event-info { flex: 1; }
-  .event-apt { font-size: 14px; font-weight: 500; }
-  .event-detail { font-size: 13px; color: #666; margin-top: 2px; }
-  .event-time { font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 6px; flex-shrink: 0; }
-  .event-time.checkin { background: #e6f4ea; color: #1e8e3e; }
-  .event-time.checkout { background: #fef7e0; color: #f29900; }
-  .divider { border-bottom: 1px solid #eee; margin-top: 8px; }
-  .empty { font-size: 14px; color: #999; padding: 8px 0; }
-  .loading { text-align: center; padding: 3rem; color: #666; font-size: 16px; }
-  .error { background: #fce8e6; color: #c5221f; border-radius: 8px; padding: 12px 16px; margin-bottom: 1rem; font-size: 14px; }
+  html, body { height: 100%; overflow: hidden; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #fff; display: flex; flex-direction: column; padding: 1rem; }
+  .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem; flex-shrink: 0; }
+  .logo { font-size: 18px; font-weight: 600; letter-spacing: 1px; color: #e0e0e0; }
+  .clock { font-size: 14px; color: #aaa; }
+  button { font-size: 12px; padding: 5px 12px; border: 1px solid #444; border-radius: 6px; background: transparent; cursor: pointer; color: #aaa; }
+  button:hover { background: #333; color: #fff; }
+  .grid { display: grid; grid-template-columns: 180px repeat(3, 1fr); gap: 8px; flex: 1; overflow: hidden; }
+  .col-header { display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; padding: 10px; }
+  .col-header .day-name { font-size: 15px; font-weight: 600; }
+  .col-header .day-date { font-size: 12px; color: #aaa; margin-top: 2px; }
+  .col-header.today { background: #16213e; border: 1px solid #0f3460; }
+  .col-header.other { background: #16213e; border: 1px solid #2a2a4a; }
+  .apt-name { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 0 10px; border-radius: 10px; background: #16213e; border: 1px solid #2a2a4a; }
+  .apt-building { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+  .apt-unit { font-size: 15px; font-weight: 600; color: #e0e0e0; }
+  .cell { display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; background: #16213e; border: 1px solid #2a2a4a; gap: 6px; padding: 8px; }
+  .cell.today-col { border-color: #0f3460; }
+  .cell.empty { opacity: 0.3; }
+  .event { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 100%; }
+  .arrow-out { font-size: 22px; color: #ff6b6b; line-height: 1; }
+  .arrow-in { font-size: 22px; color: #51cf66; line-height: 1; }
+  .event-time { font-size: 12px; color: #ddd; display: flex; align-items: center; gap: 3px; }
+  .event-guests { font-size: 12px; color: #ddd; display: flex; align-items: center; gap: 3px; }
+  .divider { width: 60%; height: 1px; background: #2a2a4a; }
+  .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #1a1a2e; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #aaa; z-index: 100; }
+  .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #51cf66; margin-right: 6px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div>
-    <h1>Painel de movimentacao</h1>
-    <p class="subtitle">Atualizado automaticamente a cada 30 minutos</p>
-  </div>
-  <button onclick="loadData()">Atualizar</button>
+<div id="loading-overlay" class="loading-overlay">Carregando...</div>
+
+<div class="top">
+  <div class="logo">&#127968; Kaza Capixaba</div>
+  <div class="clock"><span class="dot"></span><span id="clock-time"></span></div>
+  <button onclick="loadData()">&#8635; Atualizar</button>
 </div>
 
-<div id="error-msg" class="error" style="display:none;"></div>
-<div id="loading" class="loading">Carregando reservas...</div>
-<div id="content" style="display:none;"></div>
+<div id="grid" class="grid"></div>
 
 <script>
-var CLIENT_ID = 'fda28ed1';
-var CLIENT_SECRET = '8ae477dc';
+var AUTH = 'Basic ' + btoa('fda28ed1:8ae477dc');
 var DOMAIN = 'dccb.stays.net';
-var AUTH = 'Basic ' + btoa(CLIENT_ID + ':' + CLIENT_SECRET);
 
-var APT_NAMES = {
-  '68433bf71282bde8b6ff5ff1': '1401 Norte',
-  '671d531f8796a56f531636bb': 'Apto 202',
-  '69813773d5a333a4535c7707': 'Apto 303'
-};
+var APTS = [
+  { id: '5ab8f8a2f6b2dc2e97f97050', building: 'Enjoy', unit: '1401 Norte' },
+  { id: '67578f32e313eeaba1c28d5e', building: 'Enjoy', unit: '1306 Norte' },
+  { id: '699caf1811715db71e25151d', building: 'Enjoy', unit: '1003 Sul' },
+  { id: '69813773d5a333a4535c7707', building: 'Enjoy', unit: '806 Sul' },
+  { id: '69c583ba4c589645828a2351', building: 'Enjoy', unit: '203 Sul' },
+  { id: '671d529a8796a56f531629bb', building: 'Wave', unit: '1202 Norte' },
+  { id: '671d531f8796a56f531636bb', building: 'Wave', unit: '1202 Norte B' }
+];
 
-function formatDate(d) {
-  var parts = d.split('-');
-  return parts[2] + '/' + parts[1] + '/' + parts[0];
+function todayStr() {
+  return new Date().toISOString().split('T')[0];
 }
 
 function addDays(dateStr, n) {
@@ -74,138 +72,131 @@ function addDays(dateStr, n) {
   return d.toISOString().split('T')[0];
 }
 
-function todayStr() {
-  return new Date().toISOString().split('T')[0];
+function formatDate(d) {
+  var parts = d.split('-');
+  return parts[2] + '/' + parts[1];
 }
 
-function dayLabel(dateStr) {
+function dayName(dateStr) {
   var today = todayStr();
-  var tom = addDays(today, 1);
-  var day2 = addDays(today, 2);
   var d = new Date(dateStr + 'T12:00:00Z');
-  var weekdays = ['Domingo','Segunda','Terca','Quarta','Quinta','Sexta','Sabado'];
+  var names = ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
   if (dateStr === today) return 'Hoje';
-  if (dateStr === tom) return 'Amanha';
-  if (dateStr === day2) return weekdays[d.getUTCDay()];
-  return formatDate(dateStr);
-}
-
-function aptName(id) {
-  return APT_NAMES[id] || 'Apto ' + id.substring(0, 6);
+  if (dateStr === addDays(today, 1)) return 'Amanha';
+  return names[d.getUTCDay()];
 }
 
 async function fetchWithProxy(apiUrl) {
   var proxies = [
     'https://corsproxy.io/?' + encodeURIComponent(apiUrl),
-    'https://api.allorigins.win/raw?url=' + encodeURIComponent(apiUrl),
-    'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(apiUrl)
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent(apiUrl)
   ];
-  var lastError = '';
   for (var i = 0; i < proxies.length; i++) {
     try {
-      var r = await fetch(proxies[i], {
-        headers: { 'Authorization': AUTH, 'Content-Type': 'application/json' }
-      });
-      if (!r.ok) { lastError = 'HTTP ' + r.status; continue; }
+      var r = await fetch(proxies[i], { headers: { 'Authorization': AUTH } });
+      if (!r.ok) continue;
       var data = await r.json();
-      return data;
-    } catch(e) {
-      lastError = e.message;
-    }
+      return Array.isArray(data) ? data : [];
+    } catch(e) { continue; }
   }
-  throw new Error('Falha: ' + lastError);
+  return [];
 }
 
-async function fetchReservations(dateType, from, to) {
-  var apiUrl = 'https://' + DOMAIN + '/external/v1/booking/reservations?from=' + from + '&to=' + to + '&dateType=' + dateType + '&limit=20';
-  var data = await fetchWithProxy(apiUrl);
-  return Array.isArray(data) ? data : [];
-}
-
-function eventHTML(ev, type) {
-  var isIn = type === 'checkin';
-  var label = isIn ? 'Check-in' : 'Check-out';
-  var time = isIn ? ev.checkInTime : ev.checkOutTime;
-  var guests = ev.guests || 0;
-  var icon = isIn ? '>' : '<';
-
-  return '<div class="event">' +
-    '<div class="event-icon ' + type + '">' + icon + '</div>' +
-    '<div class="event-info">' +
-      '<div class="event-apt">' + aptName(ev._idlisting) + '</div>' +
-      '<div class="event-detail">' + label + ' - ' + guests + ' hospede' + (guests != 1 ? 's' : '') + '</div>' +
-    '</div>' +
-    '<span class="event-time ' + type + '">' + (time || '--') + '</span>' +
-  '</div>';
-}
-
-function daySection(dateStr, checkouts, checkins) {
-  var isToday = dateStr === todayStr();
-  var label = dayLabel(dateStr);
-  var hasEvents = checkouts.length > 0 || checkins.length > 0;
-
-  var html = '<div class="day-section">' +
-    '<div class="day-header">' +
-      '<span class="day-title">' + label + '</span>' +
-      '<span class="day-date">' + formatDate(dateStr) + '</span>' +
-      (isToday ? '<span class="today-badge">hoje</span>' : '') +
-    '</div>';
-
-  if (!hasEvents) {
-    html += '<p class="empty">Nenhuma movimentacao</p>';
-  } else {
-    for (var i = 0; i < checkouts.length; i++) { html += eventHTML(checkouts[i], 'checkout'); }
-    for (var j = 0; j < checkins.length; j++) { html += eventHTML(checkins[j], 'checkin'); }
-  }
-
-  html += '<div class="divider"></div></div>';
-  return html;
+function updateClock() {
+  var now = new Date();
+  var h = String(now.getHours()).padStart(2,'0');
+  var m = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('clock-time').textContent = h + ':' + m;
 }
 
 async function loadData() {
-  document.getElementById('loading').style.display = 'block';
-  document.getElementById('content').style.display = 'none';
-  document.getElementById('error-msg').style.display = 'none';
+  var today = todayStr();
+  var d1 = addDays(today, 1);
+  var d2 = addDays(today, 2);
+  var days = [today, d1, d2];
 
-  try {
-    var today = todayStr();
-    var d1 = addDays(today, 1);
-    var d2 = addDays(today, 2);
+  var results = await Promise.all([
+    fetchWithProxy('https://' + DOMAIN + '/external/v1/booking/reservations?from=' + today + '&to=' + today + '&dateType=departure&limit=20'),
+    fetchWithProxy('https://' + DOMAIN + '/external/v1/booking/reservations?from=' + today + '&to=' + today + '&dateType=arrival&limit=20'),
+    fetchWithProxy('https://' + DOMAIN + '/external/v1/booking/reservations?from=' + d1 + '&to=' + d1 + '&dateType=departure&limit=20'),
+    fetchWithProxy('https://' + DOMAIN + '/external/v1/booking/reservations?from=' + d1 + '&to=' + d1 + '&dateType=arrival&limit=20'),
+    fetchWithProxy('https://' + DOMAIN + '/external/v1/booking/reservations?from=' + d2 + '&to=' + d2 + '&dateType=departure&limit=20'),
+    fetchWithProxy('https://' + DOMAIN + '/external/v1/booking/reservations?from=' + d2 + '&to=' + d2 + '&dateType=arrival&limit=20')
+  ]);
 
-    var results = await Promise.all([
-      fetchReservations('departure', today, today),
-      fetchReservations('arrival', today, today),
-      fetchReservations('departure', d1, d1),
-      fetchReservations('arrival', d1, d1),
-      fetchReservations('departure', d2, d2),
-      fetchReservations('arrival', d2, d2)
-    ]);
+  var data = [
+    { out: results[0], inn: results[1] },
+    { out: results[2], inn: results[3] },
+    { out: results[4], inn: results[5] }
+  ];
 
-    var co0 = results[0], ci0 = results[1];
-    var co1 = results[2], ci1 = results[3];
-    var co2 = results[4], ci2 = results[5];
-    var total = co0.length + ci0.length + co1.length + ci1.length + co2.length + ci2.length;
+  var grid = document.getElementById('grid');
+  var html = '';
 
-    var html = '<div class="cards">' +
-      '<div class="card"><div class="card-label">Check-outs hoje</div><div class="card-value">' + co0.length + '</div></div>' +
-      '<div class="card"><div class="card-label">Check-ins hoje</div><div class="card-value">' + ci0.length + '</div></div>' +
-      '<div class="card"><div class="card-label">Proximos 3 dias</div><div class="card-value">' + total + '</div></div>' +
+  var aptHeight = 'calc((100vh - 80px) / ' + (APTS.length + 1) + ')';
+
+  html += '<div class="col-header" style="height:' + aptHeight + '"></div>';
+  for (var d = 0; d < 3; d++) {
+    var isToday = d === 0;
+    html += '<div class="col-header ' + (isToday ? 'today' : 'other') + '" style="height:' + aptHeight + '">' +
+      '<div class="day-name">' + dayName(days[d]) + '</div>' +
+      '<div class="day-date">' + formatDate(days[d]) + '</div>' +
+    '</div>';
+  }
+
+  for (var a = 0; a < APTS.length; a++) {
+    var apt = APTS[a];
+    html += '<div class="apt-name" style="height:' + aptHeight + '">' +
+      '<div class="apt-building">' + apt.building + '</div>' +
+      '<div class="apt-unit">' + apt.unit + '</div>' +
     '</div>';
 
-    html += daySection(today, co0, ci0);
-    html += daySection(d1, co1, ci1);
-    html += daySection(d2, co2, ci2);
+    for (var d = 0; d < 3; d++) {
+      var checkout = null, checkin = null;
+      for (var k = 0; k < data[d].out.length; k++) {
+        if (data[d].out[k]._idlisting === apt.id) { checkout = data[d].out[k]; break; }
+      }
+      for (var k = 0; k < data[d].inn.length; k++) {
+        if (data[d].inn[k]._idlisting === apt.id) { checkin = data[d].inn[k]; break; }
+      }
 
-    document.getElementById('content').innerHTML = html;
-    document.getElementById('content').style.display = 'block';
-  } catch(e) {
-    document.getElementById('error-msg').textContent = 'Erro ao carregar: ' + e.message;
-    document.getElementById('error-msg').style.display = 'block';
-  } finally {
-    document.getElementById('loading').style.display = 'none';
+      var isEmpty = !checkout && !checkin;
+      var cellClass = 'cell' + (d === 0 ? ' today-col' : '') + (isEmpty ? ' empty' : '');
+      html += '<div class="' + cellClass + '" style="height:' + aptHeight + '">';
+
+      if (checkout) {
+        html += '<div class="event">' +
+          '<div class="arrow-out">&#8679;</div>' +
+          '<div class="event-time">&#128336; ' + (checkout.checkOutTime || '--') + '</div>' +
+        '</div>';
+      }
+
+      if (checkout && checkin) {
+        html += '<div class="divider"></div>';
+      }
+
+      if (checkin) {
+        html += '<div class="event">' +
+          '<div class="arrow-in">&#8681;</div>' +
+          '<div class="event-time">&#128336; ' + (checkin.checkInTime || '--') + '</div>' +
+          '<div class="event-guests">&#128101; ' + (checkin.guests || '--') + '</div>' +
+        '</div>';
+      }
+
+      if (isEmpty) {
+        html += '<div style="font-size:18px; color:#333;">&#8212;</div>';
+      }
+
+      html += '</div>';
+    }
   }
+
+  grid.innerHTML = html;
+  document.getElementById('loading-overlay').style.display = 'none';
 }
 
+updateClock();
+setInterval(updateClock, 1000);
 loadData();
 setInterval(loadData, 30 * 60 * 1000);
 </script>
