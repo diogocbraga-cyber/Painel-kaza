@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Painel de Movimentação</title>
+<title>Painel de Movimentacao</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f0; color: #1a1a1a; padding: 2rem; }
@@ -41,10 +41,10 @@
 
 <div class="header">
   <div>
-    <h1>Painel de movimentação</h1>
+    <h1>Painel de movimentacao</h1>
     <p class="subtitle">Atualizado automaticamente a cada 30 minutos</p>
   </div>
-  <button onclick="loadData()">↻ Atualizar</button>
+  <button onclick="loadData()">Atualizar</button>
 </div>
 
 <div id="error-msg" class="error" style="display:none;"></div>
@@ -52,24 +52,24 @@
 <div id="content" style="display:none;"></div>
 
 <script>
-const CLIENT_ID = 'fda28ed1';
-const CLIENT_SECRET = '8ae477dc';
-const DOMAIN = 'dccb.stays.net';
-const AUTH = 'Basic ' + btoa(CLIENT_ID + ':' + CLIENT_SECRET);
+var CLIENT_ID = 'fda28ed1';
+var CLIENT_SECRET = '8ae477dc';
+var DOMAIN = 'dccb.stays.net';
+var AUTH = 'Basic ' + btoa(CLIENT_ID + ':' + CLIENT_SECRET);
 
-const APT_NAMES = {
+var APT_NAMES = {
   '68433bf71282bde8b6ff5ff1': '1401 Norte',
   '671d531f8796a56f531636bb': 'Apto 202',
   '69813773d5a333a4535c7707': 'Apto 303'
 };
 
 function formatDate(d) {
-  const [y,m,day] = d.split('-');
-  return `${day}/${m}/${y}`;
+  var parts = d.split('-');
+  return parts[2] + '/' + parts[1] + '/' + parts[0];
 }
 
 function addDays(dateStr, n) {
-  const d = new Date(dateStr + 'T12:00:00Z');
+  var d = new Date(dateStr + 'T12:00:00Z');
   d.setUTCDate(d.getUTCDate() + n);
   return d.toISOString().split('T')[0];
 }
@@ -79,13 +79,13 @@ function todayStr() {
 }
 
 function dayLabel(dateStr) {
-  const today = todayStr();
-  const tom = addDays(today, 1);
-  const day2 = addDays(today, 2);
-  const d = new Date(dateStr + 'T12:00:00Z');
-  const weekdays = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  var today = todayStr();
+  var tom = addDays(today, 1);
+  var day2 = addDays(today, 2);
+  var d = new Date(dateStr + 'T12:00:00Z');
+  var weekdays = ['Domingo','Segunda','Terca','Quarta','Quinta','Sexta','Sabado'];
   if (dateStr === today) return 'Hoje';
-  if (dateStr === tom) return 'Amanhã';
+  if (dateStr === tom) return 'Amanha';
   if (dateStr === day2) return weekdays[d.getUTCDay()];
   return formatDate(dateStr);
 }
@@ -94,53 +94,71 @@ function aptName(id) {
   return APT_NAMES[id] || 'Apto ' + id.substring(0, 6);
 }
 
+async function fetchWithProxy(apiUrl) {
+  var proxies = [
+    'https://corsproxy.io/?' + encodeURIComponent(apiUrl),
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent(apiUrl),
+    'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(apiUrl)
+  ];
+  var lastError = '';
+  for (var i = 0; i < proxies.length; i++) {
+    try {
+      var r = await fetch(proxies[i], {
+        headers: { 'Authorization': AUTH, 'Content-Type': 'application/json' }
+      });
+      if (!r.ok) { lastError = 'HTTP ' + r.status; continue; }
+      var data = await r.json();
+      return data;
+    } catch(e) {
+      lastError = e.message;
+    }
+  }
+  throw new Error('Falha: ' + lastError);
+}
+
 async function fetchReservations(dateType, from, to) {
-  const url = `https://${DOMAIN}/external/v1/booking/reservations?from=${from}&to=${to}&dateType=${dateType}&limit=20`;
-  const r = await fetch(url, { headers: { 'Authorization': AUTH, 'Content-Type': 'application/json' } });
-  if (!r.ok) throw new Error(`Erro ${r.status}`);
-  const data = await r.json();
+  var apiUrl = 'https://' + DOMAIN + '/external/v1/booking/reservations?from=' + from + '&to=' + to + '&dateType=' + dateType + '&limit=20';
+  var data = await fetchWithProxy(apiUrl);
   return Array.isArray(data) ? data : [];
 }
 
 function eventHTML(ev, type) {
-  const isIn = type === 'checkin';
-  const label = isIn ? 'Check-in' : 'Check-out';
-  const time = isIn ? ev.checkInTime : ev.checkOutTime;
-  const guests = ev.guests || '—';
-  const icon = isIn ? '→' : '←';
+  var isIn = type === 'checkin';
+  var label = isIn ? 'Check-in' : 'Check-out';
+  var time = isIn ? ev.checkInTime : ev.checkOutTime;
+  var guests = ev.guests || 0;
+  var icon = isIn ? '>' : '<';
 
-  return `
-    <div class="event">
-      <div class="event-icon ${type}">${icon}</div>
-      <div class="event-info">
-        <div class="event-apt">${aptName(ev._idlisting)}</div>
-        <div class="event-detail">${label} · ${guests} hóspede${guests != 1 ? 's' : ''}</div>
-      </div>
-      <span class="event-time ${type}">${time || '—'}</span>
-    </div>`;
+  return '<div class="event">' +
+    '<div class="event-icon ' + type + '">' + icon + '</div>' +
+    '<div class="event-info">' +
+      '<div class="event-apt">' + aptName(ev._idlisting) + '</div>' +
+      '<div class="event-detail">' + label + ' - ' + guests + ' hospede' + (guests != 1 ? 's' : '') + '</div>' +
+    '</div>' +
+    '<span class="event-time ' + type + '">' + (time || '--') + '</span>' +
+  '</div>';
 }
 
 function daySection(dateStr, checkouts, checkins) {
-  const isToday = dateStr === todayStr();
-  const label = dayLabel(dateStr);
-  const hasEvents = checkouts.length > 0 || checkins.length > 0;
+  var isToday = dateStr === todayStr();
+  var label = dayLabel(dateStr);
+  var hasEvents = checkouts.length > 0 || checkins.length > 0;
 
-  let html = `
-    <div class="day-section">
-      <div class="day-header">
-        <span class="day-title">${label}</span>
-        <span class="day-date">${formatDate(dateStr)}</span>
-        ${isToday ? '<span class="today-badge">hoje</span>' : ''}
-      </div>`;
+  var html = '<div class="day-section">' +
+    '<div class="day-header">' +
+      '<span class="day-title">' + label + '</span>' +
+      '<span class="day-date">' + formatDate(dateStr) + '</span>' +
+      (isToday ? '<span class="today-badge">hoje</span>' : '') +
+    '</div>';
 
   if (!hasEvents) {
-    html += `<p class="empty">Nenhuma movimentação</p>`;
+    html += '<p class="empty">Nenhuma movimentacao</p>';
   } else {
-    checkouts.forEach(ev => { html += eventHTML(ev, 'checkout'); });
-    checkins.forEach(ev => { html += eventHTML(ev, 'checkin'); });
+    for (var i = 0; i < checkouts.length; i++) { html += eventHTML(checkouts[i], 'checkout'); }
+    for (var j = 0; j < checkins.length; j++) { html += eventHTML(checkins[j], 'checkin'); }
   }
 
-  html += `<div class="divider"></div></div>`;
+  html += '<div class="divider"></div></div>';
   return html;
 }
 
@@ -150,36 +168,29 @@ async function loadData() {
   document.getElementById('error-msg').style.display = 'none';
 
   try {
-    const today = todayStr();
-    const d1 = addDays(today, 1);
-    const d2 = addDays(today, 2);
+    var today = todayStr();
+    var d1 = addDays(today, 1);
+    var d2 = addDays(today, 2);
 
-    const [co0, ci0, co1, ci1, co2, ci2] = await Promise.all([
+    var results = await Promise.all([
       fetchReservations('departure', today, today),
       fetchReservations('arrival', today, today),
       fetchReservations('departure', d1, d1),
       fetchReservations('arrival', d1, d1),
       fetchReservations('departure', d2, d2),
-      fetchReservations('arrival', d2, d2),
+      fetchReservations('arrival', d2, d2)
     ]);
 
-    const total = co0.length + ci0.length + co1.length + ci1.length + co2.length + ci2.length;
+    var co0 = results[0], ci0 = results[1];
+    var co1 = results[2], ci1 = results[3];
+    var co2 = results[4], ci2 = results[5];
+    var total = co0.length + ci0.length + co1.length + ci1.length + co2.length + ci2.length;
 
-    let html = `
-      <div class="cards">
-        <div class="card">
-          <div class="card-label">Check-outs hoje</div>
-          <div class="card-value">${co0.length}</div>
-        </div>
-        <div class="card">
-          <div class="card-label">Check-ins hoje</div>
-          <div class="card-value">${ci0.length}</div>
-        </div>
-        <div class="card">
-          <div class="card-label">Próximos 3 dias</div>
-          <div class="card-value">${total}</div>
-        </div>
-      </div>`;
+    var html = '<div class="cards">' +
+      '<div class="card"><div class="card-label">Check-outs hoje</div><div class="card-value">' + co0.length + '</div></div>' +
+      '<div class="card"><div class="card-label">Check-ins hoje</div><div class="card-value">' + ci0.length + '</div></div>' +
+      '<div class="card"><div class="card-label">Proximos 3 dias</div><div class="card-value">' + total + '</div></div>' +
+    '</div>';
 
     html += daySection(today, co0, ci0);
     html += daySection(d1, co1, ci1);
@@ -188,7 +199,7 @@ async function loadData() {
     document.getElementById('content').innerHTML = html;
     document.getElementById('content').style.display = 'block';
   } catch(e) {
-    document.getElementById('error-msg').textContent = 'Erro ao carregar: ' + e.message + '. Verifique se está rodando via servidor local.';
+    document.getElementById('error-msg').textContent = 'Erro ao carregar: ' + e.message;
     document.getElementById('error-msg').style.display = 'block';
   } finally {
     document.getElementById('loading').style.display = 'none';
