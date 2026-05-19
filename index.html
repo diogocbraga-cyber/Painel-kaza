@@ -25,7 +25,7 @@
   .cell { display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; background: #16213e; border: 1px solid #2a2a4a; gap: 6px; padding: 8px; }
   .cell.today-col { border-color: #0f3460; }
   .cell.empty { opacity: 0.3; }
-  .event { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 100%; }
+  .event { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; width: 100%; }
   .arrow-out { font-size: 22px; color: #ff6b6b; line-height: 1; }
   .arrow-in { font-size: 22px; color: #51cf66; line-height: 1; }
   .event-time { font-size: 12px; color: #ddd; display: flex; align-items: center; gap: 3px; }
@@ -53,17 +53,20 @@ var AUTH = 'Basic ' + btoa('fda28ed1:8ae477dc');
 var DOMAIN = 'dccb.stays.net';
 
 var APTS = [
-  { id: '5ab8f8a2f6b2dc2e97f97050', building: 'Enjoy', unit: '1401 Norte' },
+  { id: '671d529a8796a56f531629bb', building: 'Wave', unit: '1202 Norte' },
+  { id: '671d531f8796a56f531636bb', building: 'Ilha de Paros', unit: '404' },
   { id: '67578f32e313eeaba1c28d5e', building: 'Enjoy', unit: '1306 Norte' },
+  { id: '68433bf71282bde8b6ff5ff1', building: 'Enjoy', unit: '1401 Norte' },
   { id: '699caf1811715db71e25151d', building: 'Enjoy', unit: '1003 Sul' },
   { id: '69813773d5a333a4535c7707', building: 'Enjoy', unit: '806 Sul' },
-  { id: '69c583ba4c589645828a2351', building: 'Enjoy', unit: '203 Sul' },
-  { id: '671d529a8796a56f531629bb', building: 'Wave', unit: '1202 Norte' },
-  { id: '671d531f8796a56f531636bb', building: 'Wave', unit: '1202 Norte B' }
+  { id: '69c583ba4c589645828a2351', building: 'Enjoy', unit: '203 Sul' }
 ];
 
 function todayStr() {
-  return new Date().toISOString().split('T')[0];
+  var now = new Date();
+  var offset = now.getTimezoneOffset();
+  var local = new Date(now.getTime() - (offset * 60000));
+  return local.toISOString().split('T')[0];
 }
 
 function addDays(dateStr, n) {
@@ -166,8 +169,8 @@ async function loadData() {
 
       if (checkout) {
         html += '<div class="event">' +
-          '<div class="arrow-out">&#8679;</div>' +
-          '<div class="event-time">&#128336; ' + (checkout.checkOutTime || '--') + '</div>' +
+          '<span class="arrow-out">&#8679;</span>' +
+          '<span class="event-time">&#128336; ' + (checkout.checkOutTime || '--') + '</span>' +
         '</div>';
       }
 
@@ -177,9 +180,9 @@ async function loadData() {
 
       if (checkin) {
         html += '<div class="event">' +
-          '<div class="arrow-in">&#8681;</div>' +
-          '<div class="event-time">&#128336; ' + (checkin.checkInTime || '--') + '</div>' +
-          '<div class="event-guests">&#128101; ' + (checkin.guests || '--') + '</div>' +
+          '<span class="arrow-in">&#8681;</span>' +
+          '<span class="event-time">&#128336; ' + (checkin.checkInTime || '--') + '</span>' +
+          '<span class="event-guests">&#128101; ' + (checkin.guests || '--') + '</span>' +
         '</div>';
       }
 
