@@ -31,7 +31,7 @@
   .cell { display: flex; flex-direction: row; align-items: center; justify-content: center; border-radius: 8px; background: #16213e; border: 1px solid #222; gap: 8px; padding: 6px 8px; }
   .cell.today-col { border-color: #1e3a6e; }
   .cell.empty { opacity: 0.2; }
-  .half { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex: 1; }
+  .half { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; flex: 1; flex-wrap: nowrap; }
   .half-divider { width: 1px; height: 70%; background: #2a2a4a; flex-shrink: 0; }
   .arrow-out { font-size: 24px; color: #ff6b6b; line-height: 1; }
   .arrow-in { font-size: 24px; color: #51cf66; line-height: 1; }
@@ -192,8 +192,8 @@ async function loadData() {
 
       if (checkout) {
         html += '<div class="half">' +
-          '<div class="arrow-out">&#8679;</div>' +
-          '<div class="info-line">&#128336; ' + (checkout.checkOutTime || '--') + '</div>' +
+          '<span class="arrow-out">&#8679;</span>' +
+          '<span class="info-line">&#128336; ' + (checkout.checkOutTime || '--') + '</span>' +
         '</div>';
       }
 
@@ -203,9 +203,9 @@ async function loadData() {
 
       if (checkin) {
         html += '<div class="half">' +
-          '<div class="arrow-in">&#8681;</div>' +
-          '<div class="info-line">&#128336; ' + (checkin.checkInTime || '--') + '</div>' +
-          '<div class="info-line">&#128101; ' + (checkin.guests || '--') + '</div>' +
+          '<span class="arrow-in">&#8681;</span>' +
+          '<span class="info-line">&#128336; ' + (checkin.checkInTime || '--') + '</span>' +
+          '<span class="info-line">&#128101; ' + (checkin.guests || '--') + '</span>' +
         '</div>';
       }
 
