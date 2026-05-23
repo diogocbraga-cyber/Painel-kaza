@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enxoval - Kaza Capixaba</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f1a; color: #fff; min-height: 100vh; padding: 1rem; }
+
+  h1 { font-size: 20px; font-weight: 600; color: #e0e0e0; margin-bottom: 1rem; }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-end;
+    margin-bottom: 1.2rem;
+    background: #16213e;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #222;
+  }
+  .filter-group { display: flex; flex-direction: column; gap: 4px; }
+  .filter-group label { font-size: 12px; color: #888; }
+  .filter-group input {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background: #0f0f1a;
+    color: #fff;
+    font-size: 14px;
+  }
+  .btn {
+    padding: 7px 18px;
+    border-radius: 6px;
+    border: none;
+    background: #1e3a6e;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    align-self: flex-end;
+  }
+  .btn:hover { background: #2a4f96; }
+
+  .loading { text-align: center; padding: 2rem; color: #aaa; display: none; }
+  .error { background: #3a1010; color: #ff6b6b; padding: 10px 14px; border-radius: 8px; margin-bottom: 1rem; display: none; font-size: 14px; }
+
+  /* TOTAIS GERAIS */
+  .totals-section { margin-bottom: 1.5rem; }
+  .totals-section h2 { font-size: 15px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .totals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+  }
+  .total-card {
+    background: #16213e;
+    border: 1px solid #222;
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .total-card .val { font-size: 28px; font-weight: 700; color: #4a9eff; }
+  .total-card .lbl { font-size: 11px; color: #888; margin-top: 2px; text-transform: uppercase; }
+
+  /* TABELA POR APT */
+  .apt-section h2 { font-size: 15px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .apt-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .apt-table th {
+    background: #16213e;
+    padding: 8px 10px;
+    text-align: left;
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    border-bottom: 1px solid #222;
+  }
+  .apt-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #1a1a2e;
+    vertical-align: top;
+  }
+  .apt-table tr:hover td { background: #16213e; }
+  .apt-name-cell { font-weight: 600; color: #ddd; white-space: nowrap; }
+  .apt-date-cell { color: #aaa; font-size: 12px; }
+  .apt-guests-cell { color: #ccc; }
+  .extra-badge {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: #3a2000;
+    color: #f29900;
+    margin-left: 4px;
+  }
+  .items-list { display: flex; flex-wrap: wrap; gap: 4px; }
+  .item-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #1a2a3a;
+    color: #7ab3ff;
+    white-space: nowrap;
+  }
+  .item-tag.towel { background: #1a2a1a; color: #7aff9a; }
+  .item-tag.extra { background: #2a1a00; color: #ffb74a; }
+  .no-results { text-align: center; padding: 2rem; color: #555; font-size: 15px; }
+</style>
+</head>
+<body>
+
+<h1>&#128716; Enxoval por Período</h1>
+
+<div class="filters">
+  <div class="filter-group">
+    <label>Data Início (Check-out)</label>
+    <input type="date" id="date-from">
+  </div>
+  <div class="filter-group">
+    <label>Data Fim (Check-out)</label>
+    <input type="date" id="date-to">
+  </div>
+  <button class="btn" onclick="calcular()">&#128269; Calcular</button>
+</div>
+
+<div id="error" class="error"></div>
+<div id="loading" class="loading">Buscando reservas...</div>
+<div id="results" style="display:none;">
+  <div class="totals-section">
+    <h2>&#129523; Total do Período</h2>
+    <div class="totals-grid" id="totals-grid"></div>
+  </div>
+  <div class="apt-section">
+    <h2>&#127968; Detalhe por Apartamento</h2>
+    <table class="apt-table">
+      <thead>
+        <tr>
+          <th>Apartamento</th>
+          <th>Check-out</th>
+          <th>Hóspedes</th>
+          <th>Roupa de Cama</th>
+          <th>Toalhas</th>
+        </tr>
+      </thead>
+      <tbody id="apt-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+var AUTH = 'Basic ' + btoa('fda28ed1:8ae477dc');
+var DOMAIN = 'dccb.stays.net';
+var CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRCtJ9ktCin_PwwYJ4ILrPn2rbKFdT704ttoAXihAHJVb_hDlFXyQFiWquM0joUSOvTYMnOBnZ-HoHf/pub?output=csv';
+
+// Set default dates
+var today = new Date();
+var firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+var lastDay = new Date(today.getFullYear(), today.getMonth()+1, 0);
+document.getElementById('date-from').value = firstDay.toISOString().split('T')[0];
+document.getElementById('date-to').value = lastDay.toISOString().split('T')[0];
+
+function parseCSV(text) {
+  var lines = text.trim().split('\n');
+  var headers = lines[0].split(',').map(function(h){ return h.trim().replace(/"/g,''); });
+  var result = [];
+  for (var i = 1; i < lines.length; i++) {
+    var vals = lines[i].split(',').map(function(v){ return v.trim().replace(/"/g,''); });
+    var obj = {};
+    for (var j = 0; j < headers.length; j++) obj[headers[j]] = vals[j] || '0';
+    result.push(obj);
+  }
+  return result;
+}
+
+function n(val) { return parseInt(val) || 0; }
+
+function calcEnxoval(apt, guests) {
+  var hospedesPadrao = n(apt['qtd_hospedes_padrão']);
+  var extra = guests > hospedesPadrao;
+
+  // Camas fixas padrão
+  var queen = n(apt['cama_queen']);
+  var casal = n(apt['cama_casal']);
+  var solteiro = n(apt['cama_solteiro']);
+  var banheiros = n(apt['banheiros']);
+
+  // Camas extras (sofá-cama etc)
+  var queenEx = 0, casalEx = 0, solteiroEx = 0;
+  if (extra) {
+    queenEx = n(apt['cama_queen_extra']);
+    casalEx = n(apt['cama_casal_extra']);
+    solteiroEx = n(apt['cama_solteiro_extra']);
+  }
+
+  // Lençóis elásticos
+  var elastico_queen = queen + queenEx;
+  var elastico_casal = casal + casalEx;
+  var elastico_solteiro = solteiro + solteiroEx;
+
+  // Lençóis sem elástico (mesmo qty que elásticos)
+  var sem_elastico_queen = elastico_queen;
+  var sem_elastico_casal = elastico_casal;
+  var sem_elastico_solteiro = elastico_solteiro;
+
+  // Fronhas (2 por cama casal/queen, 1 por solteiro)
+  var fronhas = (elastico_queen * 2) + (elastico_casal * 2) + (elastico_solteiro * 1);
+
+  // Toalhas de banho = capacidade padrão (+ extras se ultrapassar)
+  var toalhas_banho = hospedesPadrao;
+  if (extra) toalhas_banho = guests;
+
+  // Toalhas de rosto = 1 por banheiro
+  var toalhas_rosto = banheiros;
+
+  return {
+    elastico_queen: elastico_queen,
+    elastico_casal: elastico_casal,
+    elastico_solteiro: elastico_solteiro,
+    sem_elastico_queen: sem_elastico_queen,
+    sem_elastico_casal: sem_elastico_casal,
+    sem_elastico_solteiro: sem_elastico_solteiro,
+    fronhas: fronhas,
+    toalhas_banho: toalhas_banho,
+    toalhas_rosto: toalhas_rosto,
+    extra: extra
+  };
+}
+
+async function fetchCSV() {
+  var proxies = [
+    'https://corsproxy.io/?' + encodeURIComponent(CSV_URL),
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent(CSV_URL)
+  ];
+  for (var i = 0; i < proxies.length; i++) {
+    try {
+      var r = await fetch(proxies[i]);
+      if (!r.ok) continue;
+      return await r.text();
+    } catch(e) {}
+  }
+  // Try direct
+  try {
+    var r = await fetch(CSV_URL);
+    if (r.ok) return await r.text();
+  } catch(e) {}
+  throw new Error('Nao foi possivel carregar a planilha');
+}
+
+async function fetchReservations(from, to) {
+  var url = 'https://'+DOMAIN+'/external/v1/booking/reservations?from='+from+'&to='+to+'&dateType=departure&limit=50';
+  var proxies = [
+    'https://corsproxy.io/?' + encodeURIComponent(url),
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent(url)
+  ];
+  for (var i = 0; i < proxies.length; i++) {
+    try {
+      var r = await fetch(proxies[i], { headers: { 'Authorization': AUTH } });
+      if (!r.ok) continue;
+      var d = await r.json();
+      return Array.isArray(d) ? d : [];
+    } catch(e) {}
+  }
+  return [];
+}
+
+function fmt(dateStr) {
+  if (!dateStr) return '--';
+  var p = dateStr.split('-');
+  return p[2]+'/'+p[1]+'/'+p[0];
+}
+
+async function calcular() {
+  var from = document.getElementById('date-from').value;
+  var to = document.getElementById('date-to').value;
+
+  if (!from || !to) {
+    document.getElementById('error').textContent = 'Selecione as datas de inicio e fim.';
+    document.getElementById('error').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('error').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('loading').style.display = 'block';
+
+  try {
+    var csvText = await fetchCSV();
+    var apts = parseCSV(csvText);
+    var aptMap = {};
+    for (var i = 0; i < apts.length; i++) aptMap[apts[i]['listing_id']] = apts[i];
+
+    var reservations = await fetchReservations(from, to);
+
+    if (reservations.length === 0) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('results').style.display = 'block';
+      document.getElementById('totals-grid').innerHTML = '';
+      document.getElementById('apt-tbody').innerHTML = '<tr><td colspan="5" class="no-results">Nenhum check-out encontrado no período.</td></tr>';
+      return;
+    }
+
+    // Sort by checkout date
+    reservations.sort(function(a, b) { return a.checkOutDate > b.checkOutDate ? 1 : -1; });
+
+    // Totals
+    var totals = {
+      elastico_queen: 0, elastico_casal: 0, elastico_solteiro: 0,
+      sem_elastico_queen: 0, sem_elastico_casal: 0, sem_elastico_solteiro: 0,
+      fronhas: 0, toalhas_banho: 0, toalhas_rosto: 0
+    };
+
+    var rows = '';
+    for (var i = 0; i < reservations.length; i++) {
+      var res = reservations[i];
+      var apt = aptMap[res._idlisting];
+      if (!apt) continue;
+
+      var guests = n(res.guests);
+      var e = calcEnxoval(apt, guests);
+
+      // Add to totals
+      for (var key in totals) totals[key] += e[key];
+
+      // Build items list
+      var cama_items = '';
+      if (e.elastico_queen > 0) cama_items += '<span class="item-tag'+(e.extra?' extra':'')+'">'+e.elastico_queen+'x Elástico Queen</span>';
+      if (e.sem_elastico_queen > 0) cama_items += '<span class="item-tag'+(e.extra?' extra':'')+'">'+e.sem_elastico_queen+'x Lençol Queen</span>';
+      if (e.elastico_casal > 0) cama_items += '<span class="item-tag'+(e.extra?' extra':'')+'">'+e.elastico_casal+'x Elástico Casal</span>';
+      if (e.sem_elastico_casal > 0) cama_items += '<span class="item-tag'+(e.extra?' extra':'')+'">'+e.sem_elastico_casal+'x Lençol Casal</span>';
+      if (e.elastico_solteiro > 0) cama_items += '<span class="item-tag'+(e.extra?' extra':'')+'">'+e.elastico_solteiro+'x Elástico Solteiro</span>';
+      if (e.sem_elastico_solteiro > 0) cama_items += '<span class="item-tag'+(e.extra?' extra':'')+'">'+e.sem_elastico_solteiro+'x Lençol Solteiro</span>';
+      if (e.fronhas > 0) cama_items += '<span class="item-tag">'+e.fronhas+'x Fronhas</span>';
+
+      var toalha_items = '';
+      toalha_items += '<span class="item-tag towel">'+e.toalhas_banho+'x Banho</span>';
+      toalha_items += '<span class="item-tag towel">'+e.toalhas_rosto+'x Rosto</span>';
+
+      rows += '<tr>';
+      rows += '<td class="apt-name-cell">'+apt['nome_apto']+(e.extra?'<span class="extra-badge">extra</span>':'')+'</td>';
+      rows += '<td class="apt-date-cell">'+fmt(res.checkOutDate)+'</td>';
+      rows += '<td class="apt-guests-cell">'+guests+' hósp.</td>';
+      rows += '<td><div class="items-list">'+cama_items+'</div></td>';
+      rows += '<td><div class="items-list">'+toalha_items+'</div></td>';
+      rows += '</tr>';
+    }
+
+    // Totals HTML
+    var tHtml = '';
+    var cards = [
+      { key: 'elastico_queen', lbl: 'Elástico Queen' },
+      { key: 'elastico_casal', lbl: 'Elástico Casal' },
+      { key: 'elastico_solteiro', lbl: 'Elástico Solteiro' },
+      { key: 'sem_elastico_queen', lbl: 'Lençol Queen' },
+      { key: 'sem_elastico_casal', lbl: 'Lençol Casal' },
+      { key: 'sem_elastico_solteiro', lbl: 'Lençol Solteiro' },
+      { key: 'fronhas', lbl: 'Fronhas' },
+      { key: 'toalhas_banho', lbl: 'Toalhas Banho' },
+      { key: 'toalhas_rosto', lbl: 'Toalhas Rosto' }
+    ];
+    for (var c = 0; c < cards.length; c++) {
+      if (totals[cards[c].key] > 0) {
+        tHtml += '<div class="total-card"><div class="val">'+totals[cards[c].key]+'</div><div class="lbl">'+cards[c].lbl+'</div></div>';
+      }
+    }
+
+    document.getElementById('totals-grid').innerHTML = tHtml;
+    document.getElementById('apt-tbody').innerHTML = rows;
+    document.getElementById('results').style.display = 'block';
+
+  } catch(e) {
+    document.getElementById('error').textContent = 'Erro: ' + e.message;
+    document.getElementById('error').style.display = 'block';
+  } finally {
+    document.getElementById('loading').style.display = 'none';
+  }
+}
+
+// Auto calculate on load
+calcular();
+</script>
+</body>
+</html>
