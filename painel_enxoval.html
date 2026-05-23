@@ -31,88 +31,67 @@
     color: #fff;
     font-size: 14px;
   }
-  .btn {
-    padding: 7px 18px;
-    border-radius: 6px;
-    border: none;
-    background: #1e3a6e;
-    color: #fff;
-    font-size: 14px;
-    cursor: pointer;
-    align-self: flex-end;
-  }
+  .btn { padding: 7px 18px; border-radius: 6px; border: none; background: #1e3a6e; color: #fff; font-size: 14px; cursor: pointer; align-self: flex-end; }
   .btn:hover { background: #2a4f96; }
+  .btn-print { background: #1a4a1a; }
+  .btn-print:hover { background: #256025; }
 
   .loading { text-align: center; padding: 2rem; color: #aaa; display: none; }
   .error { background: #3a1010; color: #ff6b6b; padding: 10px 14px; border-radius: 8px; margin-bottom: 1rem; display: none; font-size: 14px; }
 
-  /* TOTAIS GERAIS */
   .totals-section { margin-bottom: 1.5rem; }
-  .totals-section h2 { font-size: 15px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-  .totals-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 8px;
-  }
-  .total-card {
-    background: #16213e;
-    border: 1px solid #222;
-    border-radius: 8px;
-    padding: 10px 12px;
-    text-align: center;
-  }
-  .total-card .val { font-size: 28px; font-weight: 700; color: #4a9eff; }
+  .totals-section h2 { font-size: 13px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .totals-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+  .total-card { background: #16213e; border: 1px solid #222; border-radius: 8px; padding: 10px 12px; text-align: center; }
+  .total-card .val { font-size: 26px; font-weight: 700; color: #4a9eff; }
   .total-card .lbl { font-size: 11px; color: #888; margin-top: 2px; text-transform: uppercase; }
 
-  /* TABELA POR APT */
-  .apt-section h2 { font-size: 15px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .apt-section h2 { font-size: 13px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
   .apt-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .apt-table th {
-    background: #16213e;
-    padding: 8px 10px;
-    text-align: left;
-    font-size: 11px;
-    color: #888;
-    text-transform: uppercase;
-    border-bottom: 1px solid #222;
-  }
-  .apt-table td {
-    padding: 8px 10px;
-    border-bottom: 1px solid #1a1a2e;
-    vertical-align: top;
-  }
+  .apt-table th { background: #16213e; padding: 8px 10px; text-align: left; font-size: 11px; color: #888; text-transform: uppercase; border-bottom: 1px solid #222; }
+  .apt-table td { padding: 8px 10px; border-bottom: 1px solid #1a1a2e; vertical-align: middle; }
   .apt-table tr:hover td { background: #16213e; }
   .apt-name-cell { font-weight: 600; color: #ddd; white-space: nowrap; }
-  .apt-date-cell { color: #aaa; font-size: 12px; }
-  .apt-guests-cell { color: #ccc; }
-  .extra-badge {
-    display: inline-block;
-    font-size: 10px;
-    padding: 1px 6px;
-    border-radius: 4px;
-    background: #3a2000;
-    color: #f29900;
-    margin-left: 4px;
-  }
+  .apt-date-cell { color: #aaa; font-size: 12px; white-space: nowrap; }
+  .apt-guests-cell { color: #ccc; white-space: nowrap; }
+  .extra-badge { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 4px; background: #3a2000; color: #f29900; margin-left: 4px; }
+  .no-res-badge { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 4px; background: #2a1a3a; color: #bb7aff; margin-left: 4px; }
   .items-list { display: flex; flex-wrap: wrap; gap: 4px; }
-  .item-tag {
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 4px;
-    background: #1a2a3a;
-    color: #7ab3ff;
-    white-space: nowrap;
-  }
+  .item-tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; background: #1a2a3a; color: #7ab3ff; white-space: nowrap; }
   .item-tag.towel { background: #1a2a1a; color: #7aff9a; }
   .item-tag.extra { background: #2a1a00; color: #ffb74a; }
   .no-results { text-align: center; padding: 2rem; color: #555; font-size: 15px; }
+
+  /* PRINT STYLES */
+  @media print {
+    body { background: #fff; color: #000; padding: 0.5rem; }
+    .filters, .no-print { display: none !important; }
+    h1 { color: #000; font-size: 16px; }
+    .totals-section h2, .apt-section h2 { color: #333; }
+    .total-card { background: #f5f5f5; border-color: #ccc; }
+    .total-card .val { color: #000; }
+    .total-card .lbl { color: #555; }
+    .apt-table th { background: #f0f0f0; color: #333; }
+    .apt-table td { border-bottom: 1px solid #ddd; color: #000; }
+    .apt-name-cell { color: #000; }
+    .apt-date-cell { color: #555; }
+    .item-tag { background: #e8f0ff; color: #1a4a8a; border: 1px solid #aac; }
+    .item-tag.towel { background: #e8ffe8; color: #1a4a1a; border: 1px solid #aca; }
+    .item-tag.extra { background: #fff3e0; color: #7a4000; border: 1px solid #cca; }
+    .extra-badge { background: #fff3e0; color: #7a4000; }
+    .no-res-badge { background: #f0e8ff; color: #5a2a8a; }
+    .totals-grid { grid-template-columns: repeat(5, 1fr); }
+    .print-header { display: block !important; margin-bottom: 0.5rem; font-size: 12px; color: #555; }
+  }
+  .print-header { display: none; }
 </style>
 </head>
 <body>
 
 <h1>&#128716; Enxoval por Período</h1>
+<div class="print-header" id="print-header"></div>
 
-<div class="filters">
+<div class="filters no-print">
   <div class="filter-group">
     <label>Data Início (Check-out)</label>
     <input type="date" id="date-from">
@@ -122,6 +101,7 @@
     <input type="date" id="date-to">
   </div>
   <button class="btn" onclick="calcular()">&#128269; Calcular</button>
+  <button class="btn btn-print" onclick="imprimir()">&#128438; Imprimir</button>
 </div>
 
 <div id="error" class="error"></div>
@@ -132,12 +112,13 @@
     <div class="totals-grid" id="totals-grid"></div>
   </div>
   <div class="apt-section">
-    <h2>&#127968; Detalhe por Apartamento</h2>
+    <h2>&#127968; Detalhe por Apartamento / Check-out</h2>
     <table class="apt-table">
       <thead>
         <tr>
           <th>Apartamento</th>
           <th>Check-out</th>
+          <th>Próx. Reserva</th>
           <th>Hóspedes</th>
           <th>Roupa de Cama</th>
           <th>Toalhas</th>
@@ -153,12 +134,11 @@ var AUTH = 'Basic ' + btoa('fda28ed1:8ae477dc');
 var DOMAIN = 'dccb.stays.net';
 var CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRCtJ9ktCin_PwwYJ4ILrPn2rbKFdT704ttoAXihAHJVb_hDlFXyQFiWquM0joUSOvTYMnOBnZ-HoHf/pub?output=csv';
 
-// Set default dates
 var today = new Date();
 var firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-var lastDay = new Date(today.getFullYear(), today.getMonth()+1, 0);
+var lastDay  = new Date(today.getFullYear(), today.getMonth()+1, 0);
 document.getElementById('date-from').value = firstDay.toISOString().split('T')[0];
-document.getElementById('date-to').value = lastDay.toISOString().split('T')[0];
+document.getElementById('date-to').value   = lastDay.toISOString().split('T')[0];
 
 function parseCSV(text) {
   var lines = text.trim().split('\n');
@@ -175,107 +155,89 @@ function parseCSV(text) {
 
 function n(val) { return parseInt(val) || 0; }
 
+function addDays(s, days) {
+  var d = new Date(s + 'T12:00:00Z');
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().split('T')[0];
+}
+
 function calcEnxoval(apt, guests) {
   var hospedesPadrao = n(apt['qtd_hospedes_padrão']);
   var extra = guests > hospedesPadrao;
 
-  // Camas fixas padrão
-  var queen = n(apt['cama_queen']);
-  var casal = n(apt['cama_casal']);
+  var queen    = n(apt['cama_queen']);
+  var casal    = n(apt['cama_casal']);
   var solteiro = n(apt['cama_solteiro']);
   var banheiros = n(apt['banheiros']);
 
-  // Camas extras (sofá-cama etc)
   var queenEx = 0, casalEx = 0, solteiroEx = 0;
   if (extra) {
-    queenEx = n(apt['cama_queen_extra']);
-    casalEx = n(apt['cama_casal_extra']);
+    queenEx    = n(apt['cama_queen_extra']);
+    casalEx    = n(apt['cama_casal_extra']);
     solteiroEx = n(apt['cama_solteiro_extra']);
   }
 
-  // Lençóis elásticos
-  var elastico_queen = queen + queenEx;
-  var elastico_casal = casal + casalEx;
-  var elastico_solteiro = solteiro + solteiroEx;
-
-  // Lençóis sem elástico (mesmo qty que elásticos)
-  var sem_elastico_queen = elastico_queen;
-  var sem_elastico_casal = elastico_casal;
-  var sem_elastico_solteiro = elastico_solteiro;
-
-  // Fronhas (2 por cama casal/queen, 1 por solteiro)
-  var fronhas = (elastico_queen * 2) + (elastico_casal * 2) + (elastico_solteiro * 1);
-
-  // Toalhas de banho = capacidade padrão (+ extras se ultrapassar)
-  var toalhas_banho = hospedesPadrao;
-  if (extra) toalhas_banho = guests;
-
-  // Toalhas de rosto = 1 por banheiro
-  var toalhas_rosto = banheiros;
+  var eq = queen + queenEx;
+  var ec = casal + casalEx;
+  var es = solteiro + solteiroEx;
 
   return {
-    elastico_queen: elastico_queen,
-    elastico_casal: elastico_casal,
-    elastico_solteiro: elastico_solteiro,
-    sem_elastico_queen: sem_elastico_queen,
-    sem_elastico_casal: sem_elastico_casal,
-    sem_elastico_solteiro: sem_elastico_solteiro,
-    fronhas: fronhas,
-    toalhas_banho: toalhas_banho,
-    toalhas_rosto: toalhas_rosto,
+    elastico_queen:      eq,
+    elastico_casal:      ec,
+    elastico_solteiro:   es,
+    sem_elastico_queen:  eq,
+    sem_elastico_casal:  ec,
+    sem_elastico_solteiro: es,
+    fronhas:      (eq * 2) + (ec * 2) + (es * 1),
+    toalhas_banho: extra ? guests : hospedesPadrao,
+    toalhas_rosto: banheiros,
     extra: extra
   };
 }
 
-async function fetchCSV() {
-  var proxies = [
-    'https://corsproxy.io/?' + encodeURIComponent(CSV_URL),
-    'https://api.allorigins.win/raw?url=' + encodeURIComponent(CSV_URL)
-  ];
-  for (var i = 0; i < proxies.length; i++) {
-    try {
-      var r = await fetch(proxies[i]);
-      if (!r.ok) continue;
-      return await r.text();
-    } catch(e) {}
-  }
-  // Try direct
-  try {
-    var r = await fetch(CSV_URL);
-    if (r.ok) return await r.text();
-  } catch(e) {}
-  throw new Error('Nao foi possivel carregar a planilha');
-}
-
-async function fetchReservations(from, to) {
-  var url = 'https://'+DOMAIN+'/external/v1/booking/reservations?from='+from+'&to='+to+'&dateType=departure&limit=50';
-  var proxies = [
+async function fetchProxy(url, headers) {
+  var px = [
     'https://corsproxy.io/?' + encodeURIComponent(url),
     'https://api.allorigins.win/raw?url=' + encodeURIComponent(url)
   ];
-  for (var i = 0; i < proxies.length; i++) {
+  for (var i = 0; i < px.length; i++) {
     try {
-      var r = await fetch(proxies[i], { headers: { 'Authorization': AUTH } });
+      var r = await fetch(px[i], headers ? { headers: headers } : {});
       if (!r.ok) continue;
-      var d = await r.json();
-      return Array.isArray(d) ? d : [];
+      return r;
     } catch(e) {}
   }
-  return [];
+  return null;
 }
 
-function fmt(dateStr) {
-  if (!dateStr) return '--';
-  var p = dateStr.split('-');
+async function fetchReservations(from, to, dateType, listingId) {
+  var url = 'https://'+DOMAIN+'/external/v1/booking/reservations?from='+from+'&to='+to+'&dateType='+dateType+'&limit=50';
+  if (listingId) url += '&listingId=' + listingId;
+  var r = await fetchProxy(url, { 'Authorization': AUTH });
+  if (!r) return [];
+  var d = await r.json();
+  return Array.isArray(d) ? d : [];
+}
+
+function fmt(s) {
+  if (!s) return '--';
+  var p = s.split('-');
   return p[2]+'/'+p[1]+'/'+p[0];
+}
+
+function imprimir() {
+  var from = document.getElementById('date-from').value;
+  var to   = document.getElementById('date-to').value;
+  document.getElementById('print-header').textContent =
+    'Kaza Capixaba  |  Período: ' + fmt(from) + ' a ' + fmt(to) + '  |  Gerado em: ' + fmt(new Date().toISOString().split('T')[0]);
+  window.print();
 }
 
 async function calcular() {
   var from = document.getElementById('date-from').value;
-  var to = document.getElementById('date-to').value;
-
+  var to   = document.getElementById('date-to').value;
   if (!from || !to) {
-    document.getElementById('error').textContent = 'Selecione as datas de inicio e fim.';
+    document.getElementById('error').textContent = 'Selecione as datas.';
     document.getElementById('error').style.display = 'block';
     return;
   }
@@ -285,78 +247,87 @@ async function calcular() {
   document.getElementById('loading').style.display = 'block';
 
   try {
-    var csvText = await fetchCSV();
+    // Load apartment config
+    var csvR = await fetchProxy(CSV_URL);
+    if (!csvR) throw new Error('Nao foi possivel carregar a planilha');
+    var csvText = await csvR.text();
     var apts = parseCSV(csvText);
     var aptMap = {};
     for (var i = 0; i < apts.length; i++) aptMap[apts[i]['listing_id']] = apts[i];
 
-    var reservations = await fetchReservations(from, to);
+    // Get checkouts in period
+    var checkouts = await fetchReservations(from, to, 'departure');
 
-    if (reservations.length === 0) {
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('results').style.display = 'block';
-      document.getElementById('totals-grid').innerHTML = '';
-      document.getElementById('apt-tbody').innerHTML = '<tr><td colspan="5" class="no-results">Nenhum check-out encontrado no período.</td></tr>';
-      return;
-    }
+    // For each checkout, find next reservation for that apartment
+    var rows = '';
+    var totals = { elastico_queen:0, elastico_casal:0, elastico_solteiro:0, sem_elastico_queen:0, sem_elastico_casal:0, sem_elastico_solteiro:0, fronhas:0, toalhas_banho:0, toalhas_rosto:0 };
 
     // Sort by checkout date
-    reservations.sort(function(a, b) { return a.checkOutDate > b.checkOutDate ? 1 : -1; });
+    checkouts.sort(function(a,b){ return a.checkOutDate > b.checkOutDate ? 1 : -1; });
 
-    // Totals
-    var totals = {
-      elastico_queen: 0, elastico_casal: 0, elastico_solteiro: 0,
-      sem_elastico_queen: 0, sem_elastico_casal: 0, sem_elastico_solteiro: 0,
-      fronhas: 0, toalhas_banho: 0, toalhas_rosto: 0
-    };
-
-    var rows = '';
-    for (var i = 0; i < reservations.length; i++) {
-      var res = reservations[i];
+    for (var i = 0; i < checkouts.length; i++) {
+      var res = checkouts[i];
       var apt = aptMap[res._idlisting];
       if (!apt) continue;
 
-      var guests = n(res.guests);
-      var e = calcEnxoval(apt, guests);
+      // Find next reservation for this apartment
+      var nextFrom = res.checkOutDate;
+      var nextTo   = addDays(res.checkOutDate, 90);
+      var nextReservations = await fetchReservations(nextFrom, nextTo, 'arrival', res._idlisting);
 
-      // Add to totals
+      // Sort by checkin date and get first
+      nextReservations.sort(function(a,b){ return a.checkInDate > b.checkInDate ? 1 : -1; });
+      var nextRes = nextReservations.length > 0 ? nextReservations[0] : null;
+
+      var guests = nextRes ? n(nextRes.guests) : n(apt['qtd_hospedes_padrão']);
+      var hasNext = nextRes !== null;
+
+      var e = calcEnxoval(apt, guests);
       for (var key in totals) totals[key] += e[key];
 
-      // Build items list
       var cama_items = '';
-      if (e.elastico_queen > 0) cama_items += '<span class="item-tag'+(e.extra?' extra':'')+'">'+e.elastico_queen+'x Elástico Queen</span>';
-      if (e.sem_elastico_queen > 0) cama_items += '<span class="item-tag'+(e.extra?' extra':'')+'">'+e.sem_elastico_queen+'x Lençol Queen</span>';
-      if (e.elastico_casal > 0) cama_items += '<span class="item-tag'+(e.extra?' extra':'')+'">'+e.elastico_casal+'x Elástico Casal</span>';
-      if (e.sem_elastico_casal > 0) cama_items += '<span class="item-tag'+(e.extra?' extra':'')+'">'+e.sem_elastico_casal+'x Lençol Casal</span>';
-      if (e.elastico_solteiro > 0) cama_items += '<span class="item-tag'+(e.extra?' extra':'')+'">'+e.elastico_solteiro+'x Elástico Solteiro</span>';
-      if (e.sem_elastico_solteiro > 0) cama_items += '<span class="item-tag'+(e.extra?' extra':'')+'">'+e.sem_elastico_solteiro+'x Lençol Solteiro</span>';
-      if (e.fronhas > 0) cama_items += '<span class="item-tag">'+e.fronhas+'x Fronhas</span>';
+      if (e.elastico_queen > 0)      cama_items += '<span class="item-tag">'+e.elastico_queen+'x Elástico Queen</span>';
+      if (e.sem_elastico_queen > 0)  cama_items += '<span class="item-tag">'+e.sem_elastico_queen+'x Lençol Queen</span>';
+      if (e.elastico_casal > 0)      cama_items += '<span class="item-tag">'+e.elastico_casal+'x Elástico Casal</span>';
+      if (e.sem_elastico_casal > 0)  cama_items += '<span class="item-tag">'+e.sem_elastico_casal+'x Lençol Casal</span>';
+      if (e.elastico_solteiro > 0)   cama_items += '<span class="item-tag">'+e.elastico_solteiro+'x Elástico Solteiro</span>';
+      if (e.sem_elastico_solteiro > 0) cama_items += '<span class="item-tag">'+e.sem_elastico_solteiro+'x Lençol Solteiro</span>';
+      if (e.fronhas > 0)             cama_items += '<span class="item-tag">'+e.fronhas+'x Fronhas</span>';
+      if (e.extra)                   cama_items += '<span class="item-tag extra">+ Extra</span>';
 
       var toalha_items = '';
       toalha_items += '<span class="item-tag towel">'+e.toalhas_banho+'x Banho</span>';
       toalha_items += '<span class="item-tag towel">'+e.toalhas_rosto+'x Rosto</span>';
 
+      var nextInfo = hasNext
+        ? fmt(nextRes.checkInDate)
+        : 'Sem reserva<span class="no-res-badge">padrão</span>';
+
       rows += '<tr>';
-      rows += '<td class="apt-name-cell">'+apt['nome_apto']+(e.extra?'<span class="extra-badge">extra</span>':'')+'</td>';
+      rows += '<td class="apt-name-cell">'+apt['nome_apto']+'</td>';
       rows += '<td class="apt-date-cell">'+fmt(res.checkOutDate)+'</td>';
-      rows += '<td class="apt-guests-cell">'+guests+' hósp.</td>';
+      rows += '<td class="apt-date-cell">'+nextInfo+'</td>';
+      rows += '<td class="apt-guests-cell">'+guests+' hósp.'+(e.extra?'<span class="extra-badge">extra</span>':'')+'</td>';
       rows += '<td><div class="items-list">'+cama_items+'</div></td>';
       rows += '<td><div class="items-list">'+toalha_items+'</div></td>';
       rows += '</tr>';
     }
 
-    // Totals HTML
+    if (rows === '') {
+      rows = '<tr><td colspan="6" class="no-results">Nenhum check-out encontrado no período.</td></tr>';
+    }
+
     var tHtml = '';
     var cards = [
-      { key: 'elastico_queen', lbl: 'Elástico Queen' },
-      { key: 'elastico_casal', lbl: 'Elástico Casal' },
-      { key: 'elastico_solteiro', lbl: 'Elástico Solteiro' },
-      { key: 'sem_elastico_queen', lbl: 'Lençol Queen' },
-      { key: 'sem_elastico_casal', lbl: 'Lençol Casal' },
+      { key: 'elastico_queen',        lbl: 'Elástico Queen' },
+      { key: 'elastico_casal',        lbl: 'Elástico Casal' },
+      { key: 'elastico_solteiro',     lbl: 'Elástico Solteiro' },
+      { key: 'sem_elastico_queen',    lbl: 'Lençol Queen' },
+      { key: 'sem_elastico_casal',    lbl: 'Lençol Casal' },
       { key: 'sem_elastico_solteiro', lbl: 'Lençol Solteiro' },
-      { key: 'fronhas', lbl: 'Fronhas' },
-      { key: 'toalhas_banho', lbl: 'Toalhas Banho' },
-      { key: 'toalhas_rosto', lbl: 'Toalhas Rosto' }
+      { key: 'fronhas',               lbl: 'Fronhas' },
+      { key: 'toalhas_banho',         lbl: 'Toalhas Banho' },
+      { key: 'toalhas_rosto',         lbl: 'Toalhas Rosto' }
     ];
     for (var c = 0; c < cards.length; c++) {
       if (totals[cards[c].key] > 0) {
@@ -368,15 +339,14 @@ async function calcular() {
     document.getElementById('apt-tbody').innerHTML = rows;
     document.getElementById('results').style.display = 'block';
 
-  } catch(e) {
-    document.getElementById('error').textContent = 'Erro: ' + e.message;
+  } catch(err) {
+    document.getElementById('error').textContent = 'Erro: ' + err.message;
     document.getElementById('error').style.display = 'block';
   } finally {
     document.getElementById('loading').style.display = 'none';
   }
 }
 
-// Auto calculate on load
 calcular();
 </script>
 </body>
