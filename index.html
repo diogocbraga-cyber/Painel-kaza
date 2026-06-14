@@ -19,35 +19,20 @@
     overflow: hidden;
   }
 
-  /* TOP BAR */
-  .top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-shrink: 0;
-    min-height: 0;
-  }
+  .top { display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
   .logo { font-size: 14px; font-weight: 600; color: #e0e0e0; white-space: nowrap; }
   .clock { font-size: 13px; color: #aaa; display: flex; align-items: center; gap: 5px; }
   .dot { width: 6px; height: 6px; border-radius: 50%; background: #51cf66; animation: pulse 2s infinite; flex-shrink: 0; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
   .top button { font-size: 12px; padding: 2px 8px; border: 1px solid #333; border-radius: 4px; background: transparent; cursor: pointer; color: #888; }
 
-  /* NAV */
-  .nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    flex-shrink: 0;
-  }
+  .nav { display: flex; align-items: center; justify-content: center; gap: 5px; flex-shrink: 0; }
   .nav-btn { font-size: 13px; padding: 2px 10px; border: 1px solid #333; border-radius: 4px; background: #16213e; cursor: pointer; color: #ccc; }
   .nav-btn:hover { background: #1e2d50; }
   .nav-dates { display: flex; gap: 4px; }
   .nav-date { font-size: 12px; padding: 2px 8px; border-radius: 4px; background: #16213e; border: 1px solid #2a2a4a; color: #aaa; white-space: nowrap; }
   .nav-date.active { background: #1e3a6e; border-color: #4a7adf; color: #fff; font-weight: 600; }
 
-  /* GRID */
   .grid {
     display: grid;
     grid-template-columns: auto repeat(3, 1fr);
@@ -57,7 +42,6 @@
     align-content: start;
   }
 
-  /* BASE CELL */
   .c {
     border-radius: 6px;
     display: flex;
@@ -67,68 +51,51 @@
     padding: 4px;
   }
 
-  /* HEADER ROW */
-  .c-head {
-    background: #16213e;
-    border: 1px solid #222;
-    flex-direction: column;
-    gap: 1px;
-  }
+  /* HEADER */
+  .c-head { background: #16213e; border: 1px solid #222; flex-direction: column; gap: 1px; }
   .c-head.today { border-color: #2a4a8e; }
   .head-day { font-size: 14px; font-weight: 600; line-height: 1; }
   .head-date { font-size: 11px; color: #888; }
 
   /* APT NAME */
-  .c-apt {
-    background: #16213e;
-    border: 1px solid #222;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 3px 6px;
-    gap: 0;
-    justify-content: center;
-  }
+  .c-apt { background: #16213e; border: 1px solid #222; flex-direction: column; align-items: flex-start; padding: 3px 6px; gap: 0; justify-content: center; }
   .apt-b { font-size: 10px; color: #666; text-transform: uppercase; line-height: 1.1; }
   .apt-u { font-size: 13px; font-weight: 600; color: #ddd; line-height: 1.2; white-space: nowrap; }
 
   /* DATA CELL */
-  .c-data {
-    background: #16213e;
-    border: 1px solid #222;
-    gap: 3px;
-    padding: 3px 5px;
-  }
+  .c-data { background: #16213e; border: 1px solid #222; gap: 3px; padding: 3px 5px; }
   .c-data.today { border-color: #2a4a8e; }
-  .c-data.empty { opacity: 0.12; }
 
-  /* HORIZONTAL: checkout | divider | checkin on same line */
+  /* STATUS BACKGROUNDS */
+  .c-data.occupied { background: #1a0a0a; border-color: #3a1515; }
+  .c-data.occupied.today { border-color: #5a2020; }
+  .c-data.free { background: #0a1a0a; border-color: #153a15; }
+  .c-data.free.today { border-color: #205a20; }
+  .c-data.checkout-only { background: #1a0a0a; border-color: #3a1515; }
+  .c-data.checkin-only { background: #0a1a0a; border-color: #153a15; }
+  .c-data.turnover { background: #1a1000; border-color: #3a2800; }
+
+  /* HORIZONTAL layout */
   .c-data { flex-direction: row; }
 
-  .ev {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    flex: 1;
-    flex-wrap: nowrap;
-    overflow: hidden;
-    min-width: 0;
-  }
+  .ev { display: flex; align-items: center; justify-content: center; gap: 3px; flex: 1; flex-wrap: nowrap; overflow: hidden; min-width: 0; }
   .vdiv { width: 1px; background: #2a2a4a; align-self: stretch; flex-shrink: 0; }
   .arr-out { font-size: 16px; color: #ff6b6b; flex-shrink: 0; line-height: 1; }
   .arr-in  { font-size: 16px; color: #51cf66; flex-shrink: 0; line-height: 1; }
-  .ev-info { font-size: 12px; color: #ccc; white-space: nowrap; display: flex; align-items: center; gap: 2px; }
+  .ev-info   { font-size: 12px; color: #ccc; white-space: nowrap; display: flex; align-items: center; gap: 2px; }
   .ev-guests { font-size: 12px; color: #aaa; white-space: nowrap; display: flex; align-items: center; gap: 2px; }
-  .dash { font-size: 16px; color: #252535; }
 
-  /* PORTRAIT: checkout on top, checkin on bottom */
+  /* STATUS INDICATORS */
+  .status-occupied { font-size: 15px; }
+  .status-free { font-size: 15px; }
+
+  /* PORTRAIT */
   @media (orientation: portrait) {
     .c-data { flex-direction: column; gap: 2px; }
     .vdiv { width: 50%; height: 1px; align-self: auto; }
     .ev { width: 100%; flex: none; }
   }
 
-  /* MOBILE adjustments */
   @media (max-width: 480px) {
     body { padding: 4px; gap: 3px; }
     .logo { font-size: 12px; }
@@ -138,6 +105,7 @@
     .apt-u { font-size: 12px; }
     .arr-out, .arr-in { font-size: 14px; }
     .ev-info, .ev-guests { font-size: 11px; }
+    .status-occupied, .status-free { font-size: 13px; }
   }
 </style>
 </head>
@@ -163,13 +131,13 @@ var DOMAIN = 'dccb.stays.net';
 var offset = 0;
 
 var APTS = [
-  { id: '671d529a8796a56f531629bb', b: 'Wave',         u: '1202 Norte' },
+  { id: '671d529a8796a56f531629bb', b: 'Wave',          u: '1202 Norte' },
   { id: '671d531f8796a56f531636bb', b: 'Ilha de Paros', u: '404' },
-  { id: '67578f32e313eeaba1c28d5e', b: 'Enjoy',         u: '1306 Norte' },
-  { id: '68433bf71282bde8b6ff5ff1', b: 'Enjoy',         u: '1401 Norte' },
-  { id: '699caf1811715db71e25151d', b: 'Enjoy',         u: '1003 Sul' },
-  { id: '69813773d5a333a4535c7707', b: 'Enjoy',         u: '806 Sul' },
-  { id: '69c583ba4c589645828a2351', b: 'Enjoy',         u: '203 Sul' }
+  { id: '67578f32e313eeaba1c28d5e', b: 'Enjoy',          u: '1306 Norte' },
+  { id: '68433bf71282bde8b6ff5ff1', b: 'Enjoy',          u: '1401 Norte' },
+  { id: '699caf1811715db71e25151d', b: 'Enjoy',          u: '1003 Sul' },
+  { id: '69813773d5a333a4535c7707', b: 'Enjoy',          u: '806 Sul' },
+  { id: '69c583ba4c589645828a2351', b: 'Enjoy',          u: '203 Sul' }
 ];
 
 function todayStr() {
@@ -218,18 +186,25 @@ async function loadData(){
   for(var i=0;i<3;i++) nd+='<div class="nav-date'+(i===0?' active':'')+'">'+dname(days[i])+' '+fmt(days[i])+'</div>';
   document.getElementById('nav-dates').innerHTML=nd;
 
+  // Fetch all data: departure, arrival, included for each day
   var rs=await Promise.all([
     get('https://'+DOMAIN+'/external/v1/booking/reservations?from='+days[0]+'&to='+days[0]+'&dateType=departure&limit=20'),
     get('https://'+DOMAIN+'/external/v1/booking/reservations?from='+days[0]+'&to='+days[0]+'&dateType=arrival&limit=20'),
+    get('https://'+DOMAIN+'/external/v1/booking/reservations?from='+days[0]+'&to='+days[0]+'&dateType=included&limit=20'),
     get('https://'+DOMAIN+'/external/v1/booking/reservations?from='+days[1]+'&to='+days[1]+'&dateType=departure&limit=20'),
     get('https://'+DOMAIN+'/external/v1/booking/reservations?from='+days[1]+'&to='+days[1]+'&dateType=arrival&limit=20'),
+    get('https://'+DOMAIN+'/external/v1/booking/reservations?from='+days[1]+'&to='+days[1]+'&dateType=included&limit=20'),
     get('https://'+DOMAIN+'/external/v1/booking/reservations?from='+days[2]+'&to='+days[2]+'&dateType=departure&limit=20'),
-    get('https://'+DOMAIN+'/external/v1/booking/reservations?from='+days[2]+'&to='+days[2]+'&dateType=arrival&limit=20')
+    get('https://'+DOMAIN+'/external/v1/booking/reservations?from='+days[2]+'&to='+days[2]+'&dateType=arrival&limit=20'),
+    get('https://'+DOMAIN+'/external/v1/booking/reservations?from='+days[2]+'&to='+days[2]+'&dateType=included&limit=20')
   ]);
 
-  var data=[{o:rs[0],i:rs[1]},{o:rs[2],i:rs[3]},{o:rs[4],i:rs[5]}];
+  var data=[
+    {o:rs[0],i:rs[1],inc:rs[2]},
+    {o:rs[3],i:rs[4],inc:rs[5]},
+    {o:rs[6],i:rs[7],inc:rs[8]}
+  ];
 
-  // Calculate row height to fit all apts + header in viewport
   var totalRows = APTS.length + 1;
   var availH = 'calc((100dvh - 70px) / ' + totalRows + ' - 4px)';
 
@@ -249,26 +224,48 @@ async function loadData(){
     h+='</div>';
 
     for(var d=0;d<3;d++){
-      var co=null,ci=null;
+      var co=null, ci=null, occupied=false;
+
       for(var k=0;k<data[d].o.length;k++) if(data[d].o[k]._idlisting===apt.id){co=data[d].o[k];break;}
       for(var k=0;k<data[d].i.length;k++) if(data[d].i[k]._idlisting===apt.id){ci=data[d].i[k];break;}
-      var empty=!co&&!ci;
-      h+='<div class="c c-data'+(days[d]===today?' today':'')+(empty?' empty':'')+'" style="height:'+availH+'">';
-      if(co){
+      for(var k=0;k<data[d].inc.length;k++) if(data[d].inc[k]._idlisting===apt.id){occupied=true;break;}
+
+      // Determine cell status
+      var status = '';
+      if (co && ci) status = 'turnover';
+      else if (co) status = 'checkout-only';
+      else if (ci) status = 'checkin-only';
+      else if (occupied) status = 'occupied';
+      else status = 'free';
+
+      var isToday = days[d] === today;
+      h+='<div class="c c-data '+status+(isToday?' today':'')+'" style="height:'+availH+'">';
+
+      if (co) {
         h+='<div class="ev">';
         h+='<span class="arr-out">&#8679;</span>';
         h+='<span class="ev-info">&#128336;&nbsp;'+(co.checkOutTime||'--')+'</span>';
         h+='</div>';
       }
-      if(co&&ci) h+='<div class="vdiv"></div>';
-      if(ci){
+
+      if (co && ci) h+='<div class="vdiv"></div>';
+
+      if (ci) {
         h+='<div class="ev">';
         h+='<span class="arr-in">&#8681;</span>';
         h+='<span class="ev-info">&#128336;&nbsp;'+(ci.checkInTime||'--')+'</span>';
         h+='<span class="ev-guests">&#128101;&nbsp;'+(ci.guests||'--')+'</span>';
         h+='</div>';
       }
-      if(empty) h+='<div class="dash">&#8212;</div>';
+
+      if (!co && !ci) {
+        if (occupied) {
+          h+='<span class="status-occupied">&#128308;</span>';
+        } else {
+          h+='<span class="status-free">&#128994;</span>';
+        }
+      }
+
       h+='</div>';
     }
   }
