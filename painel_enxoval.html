@@ -200,9 +200,9 @@ function calcKit(kitType) {
     case 'solteiro':
       return { elastico_solteiro:1, sem_elastico_solteiro:1, fronhas:1, toalhas_banho:1, toalhas_rosto:0 };
     case 'sofa_casal':
-      return { elastico_solteiro:1, sem_elastico_solteiro:1, fronhas:1, toalhas_banho:1, toalhas_rosto:0 };
+      return { elastico_casal:1, sem_elastico_casal:1, fronhas:2, toalhas_banho:2, toalhas_rosto:0 };
     case 'sofa_queen':
-      return { elastico_solteiro:1, sem_elastico_solteiro:1, fronhas:1, toalhas_banho:1, toalhas_rosto:0 };
+      return { elastico_queen:1, sem_elastico_queen:1, fronhas:2, toalhas_banho:2, toalhas_rosto:0 };
     case 'especial_1401': // sofa — 2 lençois sem elastico solteiro, 1 fronha, 1 toalha banho
       return { elastico_solteiro:0, sem_elastico_solteiro:2, fronhas:1, toalhas_banho:1, toalhas_rosto:0 };
     default:
@@ -263,7 +263,11 @@ function calcEnxovalBase(apt, guests) {
 }
 
 function addKitToResult(result, kit) {
+  result.elastico_queen        += kit.elastico_queen || 0;
+  result.elastico_casal        += kit.elastico_casal || 0;
   result.elastico_solteiro     += kit.elastico_solteiro || 0;
+  result.sem_elastico_queen    += kit.sem_elastico_queen || 0;
+  result.sem_elastico_casal    += kit.sem_elastico_casal || 0;
   result.sem_elastico_solteiro += kit.sem_elastico_solteiro || 0;
   result.fronhas               += kit.fronhas || 0;
   result.toalhas_banho         += kit.toalhas_banho || 0;
