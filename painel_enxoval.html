@@ -11,26 +11,13 @@
   h1 { font-size: 20px; font-weight: 600; color: #e0e0e0; margin-bottom: 1rem; }
 
   .filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: flex-end;
-    margin-bottom: 1.2rem;
-    background: #16213e;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #222;
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end;
+    margin-bottom: 1.2rem; background: #16213e; padding: 12px;
+    border-radius: 10px; border: 1px solid #222;
   }
   .filter-group { display: flex; flex-direction: column; gap: 4px; }
   .filter-group label { font-size: 12px; color: #888; }
-  .filter-group input {
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #333;
-    background: #0f0f1a;
-    color: #fff;
-    font-size: 14px;
-  }
+  .filter-group input { padding: 6px 10px; border-radius: 6px; border: 1px solid #333; background: #0f0f1a; color: #fff; font-size: 14px; }
   .btn { padding: 7px 18px; border-radius: 6px; border: none; background: #1e3a6e; color: #fff; font-size: 14px; cursor: pointer; align-self: flex-end; }
   .btn:hover { background: #2a4f96; }
   .btn-print { background: #1a4a1a; }
@@ -39,6 +26,38 @@
   .loading { text-align: center; padding: 2rem; color: #aaa; display: none; }
   .error { background: #3a1010; color: #ff6b6b; padding: 10px 14px; border-radius: 8px; margin-bottom: 1rem; display: none; font-size: 14px; }
 
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.8); z-index: 1000;
+    display: none; align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #16213e; border: 1px solid #2a4a8e; border-radius: 12px;
+    padding: 1.5rem; max-width: 480px; width: 90%; max-height: 80vh; overflow-y: auto;
+  }
+  .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: #e0e0e0; }
+  .modal .apt-info { font-size: 13px; color: #aaa; margin-bottom: 1rem; }
+  .modal .guests-info { font-size: 14px; color: #ffb74a; margin-bottom: 1rem; background: #2a1a00; padding: 8px 12px; border-radius: 6px; }
+  .extra-option {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px; border-radius: 8px; border: 1px solid #2a2a4a;
+    margin-bottom: 8px; cursor: pointer; transition: all 0.2s;
+  }
+  .extra-option:hover { border-color: #4a7adf; background: #1a2a4a; }
+  .extra-option.selected { border-color: #4a9eff; background: #1a2a4a; }
+  .extra-option input[type=checkbox] { width: 18px; height: 18px; cursor: pointer; accent-color: #4a9eff; }
+  .extra-option-info { flex: 1; }
+  .extra-option-name { font-size: 14px; font-weight: 500; color: #ddd; }
+  .extra-option-detail { font-size: 12px; color: #888; margin-top: 2px; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 1rem; justify-content: flex-end; }
+  .btn-cancel { background: #2a2a3a; }
+  .btn-cancel:hover { background: #3a3a4a; }
+  .btn-confirm { background: #1e3a6e; }
+  .btn-confirm:hover { background: #2a4f96; }
+
+  /* RESULTS */
   .totals-section { margin-bottom: 1.5rem; }
   .totals-section h2 { font-size: 13px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
   .totals-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
@@ -53,7 +72,6 @@
   .apt-table tr:hover td { background: #16213e; }
   .apt-name-cell { font-weight: 600; color: #ddd; white-space: nowrap; }
   .apt-date-cell { color: #aaa; font-size: 12px; white-space: nowrap; }
-  .apt-guests-cell { color: #ccc; white-space: nowrap; }
   .extra-badge { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 4px; background: #3a2000; color: #f29900; margin-left: 4px; }
   .no-res-badge { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 4px; background: #2a1a3a; color: #bb7aff; margin-left: 4px; }
   .items-list { display: flex; flex-wrap: wrap; gap: 4px; }
@@ -62,10 +80,9 @@
   .item-tag.extra { background: #2a1a00; color: #ffb74a; }
   .no-results { text-align: center; padding: 2rem; color: #555; font-size: 15px; }
 
-  /* PRINT STYLES */
   @media print {
     body { background: #fff; color: #000; padding: 0.5rem; }
-    .filters, .no-print { display: none !important; }
+    .filters, .no-print, .modal-overlay { display: none !important; }
     h1 { color: #000; font-size: 16px; }
     .totals-section h2, .apt-section h2 { color: #333; }
     .total-card { background: #f5f5f5; border-color: #ccc; }
@@ -78,8 +95,6 @@
     .item-tag { background: #e8f0ff; color: #1a4a8a; border: 1px solid #aac; }
     .item-tag.towel { background: #e8ffe8; color: #1a4a1a; border: 1px solid #aca; }
     .item-tag.extra { background: #fff3e0; color: #7a4000; border: 1px solid #cca; }
-    .extra-badge { background: #fff3e0; color: #7a4000; }
-    .no-res-badge { background: #f0e8ff; color: #5a2a8a; }
     .totals-grid { grid-template-columns: repeat(5, 1fr); }
     .print-header { display: block !important; margin-bottom: 0.5rem; font-size: 12px; color: #555; }
   }
@@ -87,6 +102,20 @@
 </style>
 </head>
 <body>
+
+<!-- MODAL para seleção de camas extras -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-title">Camas extras</h3>
+    <div class="apt-info" id="modal-apt-info"></div>
+    <div class="guests-info" id="modal-guests-info"></div>
+    <div id="modal-options"></div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="cancelModal()">Cancelar</button>
+      <button class="btn btn-confirm" onclick="confirmModal()">Confirmar</button>
+    </div>
+  </div>
+</div>
 
 <h1>&#128716; Enxoval por Período</h1>
 <div class="print-header" id="print-header"></div>
@@ -112,7 +141,7 @@
     <div class="totals-grid" id="totals-grid"></div>
   </div>
   <div class="apt-section">
-    <h2>&#127968; Detalhe por Apartamento / Check-out</h2>
+    <h2>&#127968; Detalhe por Apartamento</h2>
     <table class="apt-table">
       <thead>
         <tr>
@@ -134,6 +163,53 @@ var AUTH = 'Basic ' + btoa('fda28ed1:8ae477dc');
 var DOMAIN = 'dccb.stays.net';
 var CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRCtJ9ktCin_PwwYJ4ILrPn2rbKFdT704ttoAXihAHJVb_hDlFXyQFiWquM0joUSOvTYMnOBnZ-HoHf/pub?output=csv';
 
+// Extra beds config per apartment
+var EXTRA_BEDS = {
+  // 2-quarto apartments — user chooses (sofa OR colchao)
+  '671d531f8796a56f531636bb': { // Ilha de Paros 404
+    choose: true,
+    options: [
+      { id: 'sofa',    name: 'Sofá-cama', detail: 'Casal — kit solteiro', kit: 'sofa_casal' },
+      { id: 'colchao', name: 'Colchão',   detail: 'Solteiro — kit solteiro', kit: 'solteiro' }
+    ]
+  },
+  '67578f32e313eeaba1c28d5e': { // Enjoy 1306 Norte
+    choose: true,
+    options: [
+      { id: 'sofa',    name: 'Sofá-cama', detail: 'Queen — kit solteiro', kit: 'sofa_queen' },
+      { id: 'colchao', name: 'Colchão',   detail: 'Solteiro — kit solteiro', kit: 'solteiro' }
+    ]
+  },
+  '69813773d5a333a4535c7707': { // Enjoy 806 Sul
+    choose: true,
+    options: [
+      { id: 'sofa',    name: 'Sofá-cama', detail: 'Casal — kit solteiro', kit: 'sofa_casal' },
+      { id: 'colchao', name: 'Colchão',   detail: 'Solteiro — kit solteiro', kit: 'solteiro' }
+    ]
+  },
+  // 1-quarto apartments — automatic (no choice)
+  '671d529a8796a56f531629bb': { choose: false, kit: 'solteiro' },     // Wave 1202 — sofa casal
+  '68433bf71282bde8b6ff5ff1': { choose: false, kit: 'especial_1401' },// Enjoy 1401 — sofa especial
+  '699caf1811715db71e25151d': { choose: false, kit: 'solteiro' },     // Enjoy 1003 — sofa casal
+  '69c583ba4c589645828a2351': { choose: false, kit: 'solteiro' }      // Enjoy 203 — sofa queen
+};
+
+// Kit compositions
+function calcKit(kitType) {
+  switch(kitType) {
+    case 'solteiro':
+      return { elastico_solteiro:1, sem_elastico_solteiro:1, fronhas:1, toalhas_banho:1, toalhas_rosto:0 };
+    case 'sofa_casal':
+      return { elastico_solteiro:1, sem_elastico_solteiro:1, fronhas:1, toalhas_banho:1, toalhas_rosto:0 };
+    case 'sofa_queen':
+      return { elastico_solteiro:1, sem_elastico_solteiro:1, fronhas:1, toalhas_banho:1, toalhas_rosto:0 };
+    case 'especial_1401': // sofa — 2 lençois sem elastico solteiro, 1 fronha, 1 toalha banho
+      return { elastico_solteiro:0, sem_elastico_solteiro:2, fronhas:1, toalhas_banho:1, toalhas_rosto:0 };
+    default:
+      return { elastico_solteiro:0, sem_elastico_solteiro:0, fronhas:0, toalhas_banho:0, toalhas_rosto:0 };
+  }
+}
+
 var today = new Date();
 var firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
 var lastDay  = new Date(today.getFullYear(), today.getMonth()+1, 0);
@@ -154,56 +230,53 @@ function parseCSV(text) {
 }
 
 function n(val) { return parseInt(val) || 0; }
-
 function addDays(s, days) {
-  var d = new Date(s + 'T12:00:00Z');
-  d.setUTCDate(d.getUTCDate() + days);
+  var d = new Date(s+'T12:00:00Z');
+  d.setUTCDate(d.getUTCDate()+days);
   return d.toISOString().split('T')[0];
 }
+function fmt(s) {
+  if(!s) return '--';
+  var p=s.split('-');
+  return p[2]+'/'+p[1]+'/'+p[0];
+}
 
-function calcEnxoval(apt, guests) {
+function calcEnxovalBase(apt, guests) {
   var hospedesPadrao = n(apt['qtd_hospedes_padrão']);
-  var extra = guests > hospedesPadrao;
-
   var queen    = n(apt['cama_queen']);
   var casal    = n(apt['cama_casal']);
   var solteiro = n(apt['cama_solteiro']);
   var banheiros = n(apt['banheiros']);
 
-  var queenEx = 0, casalEx = 0, solteiroEx = 0;
-  if (extra) {
-    queenEx    = n(apt['cama_queen_extra']);
-    casalEx    = n(apt['cama_casal_extra']);
-    solteiroEx = n(apt['cama_solteiro_extra']);
-  }
-
-  var eq = queen + queenEx;
-  var ec = casal + casalEx;
-  var es = solteiro + solteiroEx;
-
   return {
-    elastico_queen:      eq,
-    elastico_casal:      ec,
-    elastico_solteiro:   es,
-    sem_elastico_queen:  eq,
-    sem_elastico_casal:  ec,
-    sem_elastico_solteiro: es,
-    fronhas:      (eq * 2) + (ec * 2) + (es * 1),
-    toalhas_banho: extra ? guests : hospedesPadrao,
-    toalhas_rosto: banheiros,
-    extra: extra
+    elastico_queen:        queen,
+    elastico_casal:        casal,
+    elastico_solteiro:     solteiro,
+    sem_elastico_queen:    queen,
+    sem_elastico_casal:    casal,
+    sem_elastico_solteiro: solteiro,
+    fronhas:               (queen*2) + (casal*2) + (solteiro*1),
+    toalhas_banho:         Math.min(guests, hospedesPadrao),
+    toalhas_rosto:         banheiros,
+    extra:                 guests > hospedesPadrao
   };
 }
 
+function addKitToResult(result, kit) {
+  result.elastico_solteiro     += kit.elastico_solteiro || 0;
+  result.sem_elastico_solteiro += kit.sem_elastico_solteiro || 0;
+  result.fronhas               += kit.fronhas || 0;
+  result.toalhas_banho         += kit.toalhas_banho || 0;
+  result.toalhas_rosto         += kit.toalhas_rosto || 0;
+  return result;
+}
+
 async function fetchProxy(url, headers) {
-  var px = [
-    'https://corsproxy.io/?' + encodeURIComponent(url),
-    'https://api.allorigins.win/raw?url=' + encodeURIComponent(url)
-  ];
-  for (var i = 0; i < px.length; i++) {
+  var px = ['https://corsproxy.io/?'+encodeURIComponent(url), 'https://api.allorigins.win/raw?url='+encodeURIComponent(url)];
+  for (var i=0;i<px.length;i++) {
     try {
-      var r = await fetch(px[i], headers ? { headers: headers } : {});
-      if (!r.ok) continue;
+      var r = await fetch(px[i], headers?{headers:headers}:{});
+      if(!r.ok) continue;
       return r;
     } catch(e) {}
   }
@@ -212,24 +285,67 @@ async function fetchProxy(url, headers) {
 
 async function fetchReservations(from, to, dateType, listingId) {
   var url = 'https://'+DOMAIN+'/external/v1/booking/reservations?from='+from+'&to='+to+'&dateType='+dateType+'&limit=50';
-  if (listingId) url += '&listingId=' + listingId;
-  var r = await fetchProxy(url, { 'Authorization': AUTH });
-  if (!r) return [];
+  if (listingId) url += '&listingId='+listingId;
+  var r = await fetchProxy(url, {'Authorization': AUTH});
+  if(!r) return [];
   var d = await r.json();
   return Array.isArray(d) ? d : [];
 }
 
-function fmt(s) {
-  if (!s) return '--';
-  var p = s.split('-');
-  return p[2]+'/'+p[1]+'/'+p[0];
+// Modal state
+var modalQueue = [];
+var modalChoices = {};
+var modalResolve = null;
+
+function showModal(res, apt, guests, hospedesPadrao) {
+  return new Promise(function(resolve) {
+    modalResolve = resolve;
+    var extraConfig = EXTRA_BEDS[res._idlisting];
+
+    document.getElementById('modal-title').textContent = '🛏️ Camas extras — ' + apt['nome_apto'];
+    document.getElementById('modal-apt-info').textContent = 'Check-out: ' + fmt(res.checkOutDate);
+    document.getElementById('modal-guests-info').textContent =
+      '👥 ' + guests + ' hóspedes (capacidade padrão: ' + hospedesPadrao + ') — ' + (guests - hospedesPadrao) + ' extra(s)';
+
+    var optHtml = '<p style="font-size:13px;color:#aaa;margin-bottom:10px;">Selecione as camas extras que serão utilizadas:</p>';
+    for (var i=0; i<extraConfig.options.length; i++) {
+      var opt = extraConfig.options[i];
+      optHtml += '<label class="extra-option" id="opt-label-'+opt.id+'">';
+      optHtml += '<input type="checkbox" id="opt-'+opt.id+'" value="'+opt.id+'" onchange="toggleOption(this)">';
+      optHtml += '<div class="extra-option-info">';
+      optHtml += '<div class="extra-option-name">'+opt.name+'</div>';
+      optHtml += '<div class="extra-option-detail">'+opt.detail+'</div>';
+      optHtml += '</div></label>';
+    }
+    document.getElementById('modal-options').innerHTML = optHtml;
+    document.getElementById('modal-overlay').classList.add('open');
+  });
+}
+
+function toggleOption(checkbox) {
+  var label = document.getElementById('opt-label-' + checkbox.value);
+  if (checkbox.checked) label.classList.add('selected');
+  else label.classList.remove('selected');
+}
+
+function cancelModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  if (modalResolve) modalResolve([]);
+}
+
+function confirmModal() {
+  var checkboxes = document.querySelectorAll('#modal-options input[type=checkbox]:checked');
+  var selected = [];
+  for (var i=0; i<checkboxes.length; i++) selected.push(checkboxes[i].value);
+  document.getElementById('modal-overlay').classList.remove('open');
+  if (modalResolve) modalResolve(selected);
 }
 
 function imprimir() {
   var from = document.getElementById('date-from').value;
   var to   = document.getElementById('date-to').value;
   document.getElementById('print-header').textContent =
-    'Kaza Capixaba  |  Período: ' + fmt(from) + ' a ' + fmt(to) + '  |  Gerado em: ' + fmt(new Date().toISOString().split('T')[0]);
+    'Kaza Capixaba  |  Período: '+fmt(from)+' a '+fmt(to)+'  |  Gerado em: '+fmt(new Date().toISOString().split('T')[0]);
   window.print();
 }
 
@@ -247,89 +363,111 @@ async function calcular() {
   document.getElementById('loading').style.display = 'block';
 
   try {
-    // Load apartment config
     var csvR = await fetchProxy(CSV_URL);
     if (!csvR) throw new Error('Nao foi possivel carregar a planilha');
     var csvText = await csvR.text();
     var apts = parseCSV(csvText);
     var aptMap = {};
-    for (var i = 0; i < apts.length; i++) aptMap[apts[i]['listing_id']] = apts[i];
+    for (var i=0;i<apts.length;i++) aptMap[apts[i]['listing_id']] = apts[i];
 
-    // Get checkouts in period
     var checkouts = await fetchReservations(from, to, 'departure');
-
-    // For each checkout, find next reservation for that apartment
-    var rows = '';
-    var totals = { elastico_queen:0, elastico_casal:0, elastico_solteiro:0, sem_elastico_queen:0, sem_elastico_casal:0, sem_elastico_solteiro:0, fronhas:0, toalhas_banho:0, toalhas_rosto:0 };
-
-    // Sort by checkout date
     checkouts.sort(function(a,b){ return a.checkOutDate > b.checkOutDate ? 1 : -1; });
 
-    for (var i = 0; i < checkouts.length; i++) {
+    var totals = { elastico_queen:0, elastico_casal:0, elastico_solteiro:0, sem_elastico_queen:0, sem_elastico_casal:0, sem_elastico_solteiro:0, fronhas:0, toalhas_banho:0, toalhas_rosto:0 };
+    var rows = '';
+
+    for (var i=0; i<checkouts.length; i++) {
       var res = checkouts[i];
       var apt = aptMap[res._idlisting];
       if (!apt) continue;
 
-      // Find next reservation for this apartment
-      var nextFrom = res.checkOutDate;
-      var nextTo   = addDays(res.checkOutDate, 90);
-      var nextReservations = await fetchReservations(nextFrom, nextTo, 'arrival', res._idlisting);
-
-      // Sort by checkin date and get first
+      // Get next reservation
+      var nextReservations = await fetchReservations(res.checkOutDate, addDays(res.checkOutDate, 90), 'arrival', res._idlisting);
       nextReservations.sort(function(a,b){ return a.checkInDate > b.checkInDate ? 1 : -1; });
       var nextRes = nextReservations.length > 0 ? nextReservations[0] : null;
 
       var guests = nextRes ? n(nextRes.guests) : n(apt['qtd_hospedes_padrão']);
+      var hospedesPadrao = n(apt['qtd_hospedes_padrão']);
       var hasNext = nextRes !== null;
+      var isExtra = guests > hospedesPadrao;
 
-      var e = calcEnxoval(apt, guests);
-      for (var key in totals) totals[key] += e[key];
+      // Calculate base enxoval
+      var e = calcEnxovalBase(apt, guests);
+      if (isExtra) e.toalhas_banho = guests;
 
+      // Handle extra beds
+      var extraConfig = EXTRA_BEDS[res._idlisting];
+      var extraKitNames = [];
+
+      if (isExtra && extraConfig) {
+        if (extraConfig.choose) {
+          // Show modal for 2-quarto apartments
+          document.getElementById('loading').style.display = 'none';
+          var selected = await showModal(res, apt, guests, hospedesPadrao);
+          document.getElementById('loading').style.display = 'block';
+
+          for (var s=0; s<selected.length; s++) {
+            var optId = selected[s];
+            var optConfig = extraConfig.options.find(function(o){ return o.id === optId; });
+            if (optConfig) {
+              var kit = calcKit(optConfig.kit);
+              addKitToResult(e, kit);
+              extraKitNames.push(optConfig.name);
+            }
+          }
+        } else {
+          // Automatic for 1-quarto
+          var kit = calcKit(extraConfig.kit);
+          addKitToResult(e, kit);
+          extraKitNames.push('Sofá-cama');
+        }
+      }
+
+      // Add to totals
+      for (var key in totals) totals[key] += e[key] || 0;
+
+      // Build row
       var cama_items = '';
-      if (e.elastico_queen > 0)      cama_items += '<span class="item-tag">'+e.elastico_queen+'x Elástico Queen</span>';
-      if (e.sem_elastico_queen > 0)  cama_items += '<span class="item-tag">'+e.sem_elastico_queen+'x Lençol Queen</span>';
-      if (e.elastico_casal > 0)      cama_items += '<span class="item-tag">'+e.elastico_casal+'x Elástico Casal</span>';
-      if (e.sem_elastico_casal > 0)  cama_items += '<span class="item-tag">'+e.sem_elastico_casal+'x Lençol Casal</span>';
-      if (e.elastico_solteiro > 0)   cama_items += '<span class="item-tag">'+e.elastico_solteiro+'x Elástico Solteiro</span>';
+      if (e.elastico_queen > 0)        cama_items += '<span class="item-tag">'+e.elastico_queen+'x Elástico Queen</span>';
+      if (e.sem_elastico_queen > 0)    cama_items += '<span class="item-tag">'+e.sem_elastico_queen+'x Lençol Queen</span>';
+      if (e.elastico_casal > 0)        cama_items += '<span class="item-tag">'+e.elastico_casal+'x Elástico Casal</span>';
+      if (e.sem_elastico_casal > 0)    cama_items += '<span class="item-tag">'+e.sem_elastico_casal+'x Lençol Casal</span>';
+      if (e.elastico_solteiro > 0)     cama_items += '<span class="item-tag">'+e.elastico_solteiro+'x Elástico Solteiro</span>';
       if (e.sem_elastico_solteiro > 0) cama_items += '<span class="item-tag">'+e.sem_elastico_solteiro+'x Lençol Solteiro</span>';
-      if (e.fronhas > 0)             cama_items += '<span class="item-tag">'+e.fronhas+'x Fronhas</span>';
-      if (e.extra)                   cama_items += '<span class="item-tag extra">+ Extra</span>';
+      if (e.fronhas > 0)               cama_items += '<span class="item-tag">'+e.fronhas+'x Fronhas</span>';
+      if (extraKitNames.length > 0)    cama_items += '<span class="item-tag extra">+'+extraKitNames.join(', ')+'</span>';
 
       var toalha_items = '';
       toalha_items += '<span class="item-tag towel">'+e.toalhas_banho+'x Banho</span>';
       toalha_items += '<span class="item-tag towel">'+e.toalhas_rosto+'x Rosto</span>';
 
-      var nextInfo = hasNext
-        ? fmt(nextRes.checkInDate)
-        : 'Sem reserva<span class="no-res-badge">padrão</span>';
+      var nextInfo = hasNext ? fmt(nextRes.checkInDate) : 'Sem reserva<span class="no-res-badge">padrão</span>';
 
       rows += '<tr>';
       rows += '<td class="apt-name-cell">'+apt['nome_apto']+'</td>';
       rows += '<td class="apt-date-cell">'+fmt(res.checkOutDate)+'</td>';
       rows += '<td class="apt-date-cell">'+nextInfo+'</td>';
-      rows += '<td class="apt-guests-cell">'+guests+' hósp.'+(e.extra?'<span class="extra-badge">extra</span>':'')+'</td>';
+      rows += '<td class="apt-date-cell">'+guests+' hósp.'+(isExtra?'<span class="extra-badge">extra</span>':'')+'</td>';
       rows += '<td><div class="items-list">'+cama_items+'</div></td>';
       rows += '<td><div class="items-list">'+toalha_items+'</div></td>';
       rows += '</tr>';
     }
 
-    if (rows === '') {
-      rows = '<tr><td colspan="6" class="no-results">Nenhum check-out encontrado no período.</td></tr>';
-    }
+    if (rows === '') rows = '<tr><td colspan="6" class="no-results">Nenhum check-out encontrado no período.</td></tr>';
 
     var tHtml = '';
     var cards = [
-      { key: 'elastico_queen',        lbl: 'Elástico Queen' },
-      { key: 'elastico_casal',        lbl: 'Elástico Casal' },
-      { key: 'elastico_solteiro',     lbl: 'Elástico Solteiro' },
-      { key: 'sem_elastico_queen',    lbl: 'Lençol Queen' },
-      { key: 'sem_elastico_casal',    lbl: 'Lençol Casal' },
-      { key: 'sem_elastico_solteiro', lbl: 'Lençol Solteiro' },
-      { key: 'fronhas',               lbl: 'Fronhas' },
-      { key: 'toalhas_banho',         lbl: 'Toalhas Banho' },
-      { key: 'toalhas_rosto',         lbl: 'Toalhas Rosto' }
+      { key:'elastico_queen',        lbl:'Elástico Queen' },
+      { key:'elastico_casal',        lbl:'Elástico Casal' },
+      { key:'elastico_solteiro',     lbl:'Elástico Solteiro' },
+      { key:'sem_elastico_queen',    lbl:'Lençol Queen' },
+      { key:'sem_elastico_casal',    lbl:'Lençol Casal' },
+      { key:'sem_elastico_solteiro', lbl:'Lençol Solteiro' },
+      { key:'fronhas',               lbl:'Fronhas' },
+      { key:'toalhas_banho',         lbl:'Toalhas Banho' },
+      { key:'toalhas_rosto',         lbl:'Toalhas Rosto' }
     ];
-    for (var c = 0; c < cards.length; c++) {
+    for (var c=0; c<cards.length; c++) {
       if (totals[cards[c].key] > 0) {
         tHtml += '<div class="total-card"><div class="val">'+totals[cards[c].key]+'</div><div class="lbl">'+cards[c].lbl+'</div></div>';
       }
