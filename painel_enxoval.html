@@ -507,13 +507,23 @@ async function calcular() {
       return aptsWithCheckout.indexOf(apt['listing_id']) < 0;
     });
 
+    // Potential search starts from today, not from filter start date
+    var todayStr = new Date().toISOString().split('T')[0];
+    var potentialFrom = todayStr > from ? todayStr : from;
+    // Only show potential if there are at least 2 days between potentialFrom and 'to'
+    var potentialFromDate = new Date(potentialFrom + 'T12:00:00Z');
+    var potentialToDate   = new Date(to + 'T12:00:00Z');
+    var diffDays = (potentialToDate - potentialFromDate) / (1000 * 60 * 60 * 24);
+
     for (var a=0; a<aptsWithoutCheckout.length; a++) {
       var apt = aptsWithoutCheckout[a];
-      // Check if apt is free for at least 2 days within period (no reservations including the period)
-      var included = await fetchReservations(from, to, 'included', apt['listing_id']);
-      var arrivals  = await fetchReservations(from, to, 'arrival',   apt['listing_id']);
+      if (diffDays < 2) continue; // not enough days for a 2-night stay
 
-      // If no reservations included and no arrivals in period — apt is free and could receive reservation
+      // Check if apt is free from today until end of period
+      var included = await fetchReservations(potentialFrom, to, 'included', apt['listing_id']);
+      var arrivals  = await fetchReservations(potentialFrom, to, 'arrival',   apt['listing_id']);
+
+      // If no reservations included and no arrivals — apt is free and could receive reservation
       if (included.length === 0 && arrivals.length === 0) {
         var hospedesPadrao = n(apt['qtd_hospedes_padrão']);
         var e = calcEnxovalBase(apt, hospedesPadrao);
@@ -566,17 +576,30 @@ async function calcular() {
   }
 }
 
-// Load apartment list on page load
+// Apartments hardcoded for checkboxes (no CSV dependency)
+var APTS_STATIC = [
+  { listing_id: '671d529a8796a56f531629bb', nome_apto: 'Wave 1202 Norte' },
+  { listing_id: '671d531f8796a56f531636bb', nome_apto: 'Ilha de Paros 404' },
+  { listing_id: '67578f32e313eeaba1c28d5e', nome_apto: 'Enjoy 1306 Norte' },
+  { listing_id: '68433bf71282bde8b6ff5ff1', nome_apto: 'Enjoy 1401 Norte' },
+  { listing_id: '699caf1811715db71e25151d', nome_apto: 'Enjoy 1003 Sul' },
+  { listing_id: '69813773d5a333a4535c7707', nome_apto: 'Enjoy 806 Sul' },
+  { listing_id: '69c583ba4c589645828a2351', nome_apto: 'Enjoy 203 Sul' }
+];
+
 async function init() {
+  // Build checkboxes immediately from static list
+  aptsList = APTS_STATIC;
+  buildCheckboxes();
+
+  // Load full apt data from CSV in background
   try {
     var csvR = await fetchProxy(CSV_URL);
     if (!csvR) return;
     var csvText = await csvR.text();
-    aptsList = parseCSV(csvText);
-    // Filter out Crystal (6a070862761ab3bb99be3a37)
-    aptsList = aptsList.filter(function(a){ return a['listing_id'] !== '6a070862761ab3bb99be3a37'; });
-    for (var i=0; i<aptsList.length; i++) aptMap[aptsList[i]['listing_id']] = aptsList[i];
-    buildCheckboxes();
+    var parsed = parseCSV(csvText);
+    parsed = parsed.filter(function(a){ return a['listing_id'] !== '6a070862761ab3bb99be3a37'; });
+    for (var i=0; i<parsed.length; i++) aptMap[parsed[i]['listing_id']] = parsed[i];
   } catch(e) {}
 }
 
