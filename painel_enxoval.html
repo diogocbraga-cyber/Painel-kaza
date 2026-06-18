@@ -129,6 +129,7 @@
 </div>
 
 <h1>&#128716; Enxoval por Período</h1>
+<div style="position:fixed;bottom:8px;right:12px;font-size:11px;color:#444;z-index:999;">v1.6</div>
 <div class="print-header" id="print-header"></div>
 
 <div class="filters no-print">
@@ -517,7 +518,7 @@ async function calcular() {
     var potentialTotals = emptyTotals();
     var potentialRows = '';
 
-    // Find apts with no checkout in period among selected
+    // Find apts with no checkout in period
     var aptsWithCheckout = checkouts.map(function(r){ return r._idlisting; });
     var aptsWithoutCheckout = selectedApts.filter(function(apt) {
       return aptsWithCheckout.indexOf(apt['listing_id']) < 0;
@@ -535,33 +536,35 @@ async function calcular() {
     var potentialArrivalPromises = aptsWithoutCheckout.map(function(apt) {
       return fetchReservations(potentialFrom, addDays(potentialFrom, 90), 'arrival', apt['listing_id']);
     });
+    var includedTodayPromises = aptsWithoutCheckout.map(function(apt) {
+      var todayStr2 = new Date().toISOString().split('T')[0];
+      return fetchReservations(todayStr2, todayStr2, 'included', apt['listing_id']);
+    });
     var potentialArrivalResults = await Promise.all(potentialArrivalPromises);
+    var includedTodayResults    = await Promise.all(includedTodayPromises);
 
     for (var a=0; a<aptsWithoutCheckout.length; a++) {
       var apt = aptsWithoutCheckout[a];
-      if (diffDays < 2) continue;
 
-      // Find next arrival for this apt
+      // Skip if currently occupied
+      if (includedTodayResults[a].length > 0) continue;
+
+      // Find next arrival for this apt starting from today
       var nextArrivals = potentialArrivalResults[a];
-      nextArrivals.sort(function(a,b){ return a.checkInDate > b.checkInDate ? 1 : -1; });
+      nextArrivals.sort(function(x,y){ return x.checkInDate > y.checkInDate ? 1 : -1; });
 
-      // Free window: from today until next arrival (or end of period)
+      // Free window: from today until next checkin date (checkout can happen on same day as next checkin)
       var freeUntil = to;
-      if (nextArrivals.length > 0) {
-        freeUntil = addDays(nextArrivals[0].checkInDate, -1);
+      if (nextArrivals.length > 0 && nextArrivals[0].checkInDate <= to) {
+        freeUntil = nextArrivals[0].checkInDate;
       }
 
-      // Check if free window is at least 2 days from today
+      // Check if free window is at least 2 days
       var freeFromDate  = new Date(potentialFrom + 'T12:00:00Z');
       var freeUntilDate = new Date(freeUntil + 'T12:00:00Z');
       var freeDays = (freeUntilDate - freeFromDate) / (1000 * 60 * 60 * 24);
 
       if (freeDays < 2) continue;
-
-      // Check if apt is currently occupied (included today)
-      var todayStr2 = new Date().toISOString().split('T')[0];
-      var includedToday = await fetchReservations(todayStr2, todayStr2, 'included', apt['listing_id']);
-      if (includedToday.length > 0) continue; // currently occupied
 
       // Apt is free for at least 2 days — show as potential
       var aptFull = aptMap[apt['listing_id']] || apt;
