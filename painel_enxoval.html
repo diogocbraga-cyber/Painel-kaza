@@ -152,7 +152,7 @@
   </div>
 
   <div class="btn-row">
-    <button class="btn" onclick="calcular()">&#128269; Calcular Enxoval</button>
+    <button class="btn" id="btn-calcular" onclick="calcular()" disabled>&#9203; Carregando...</button>
     <button class="btn btn-print" onclick="imprimir()">&#128438; Imprimir</button>
   </div>
 </div>
@@ -525,8 +525,10 @@ async function calcular() {
 
       // If no reservations included and no arrivals — apt is free and could receive reservation
       if (included.length === 0 && arrivals.length === 0) {
-        var hospedesPadrao = n(apt['qtd_hospedes_padrão']);
-        var e = calcEnxovalBase(apt, hospedesPadrao);
+        // Get full apt data from aptMap (loaded from CSV)
+        var aptFull = aptMap[apt['listing_id']] || apt;
+        var hospedesPadrao = n(aptFull['qtd_hospedes_padrão']) || 2; // fallback to 2
+        var e = calcEnxovalBase(aptFull, hospedesPadrao);
 
         for (var key in potentialTotals) potentialTotals[key] += e[key] || 0;
 
@@ -587,12 +589,31 @@ var APTS_STATIC = [
   { listing_id: '69c583ba4c589645828a2351', nome_apto: 'Enjoy 203 Sul' }
 ];
 
+// Fallback apt data in case CSV fails
+var APTS_FALLBACK = {
+  '671d529a8796a56f531629bb': { listing_id:'671d529a8796a56f531629bb', nome_apto:'1202 N - Wave Itapoã',          qtd_hospedes_padrão:'2', qtd_hospedes_max:'4', cama_queen:'0', cama_casal:'1', cama_solteiro:'0', banheiros:'1' },
+  '671d531f8796a56f531636bb': { listing_id:'671d531f8796a56f531636bb', nome_apto:'404 - Ilha de Paros',           qtd_hospedes_padrão:'4', qtd_hospedes_max:'6', cama_queen:'0', cama_casal:'2', cama_solteiro:'0', banheiros:'2' },
+  '67578f32e313eeaba1c28d5e': { listing_id:'67578f32e313eeaba1c28d5e', nome_apto:'1306 Norte - Enjoy Residence',  qtd_hospedes_padrão:'4', qtd_hospedes_max:'6', cama_queen:'0', cama_casal:'2', cama_solteiro:'0', banheiros:'2' },
+  '68433bf71282bde8b6ff5ff1': { listing_id:'68433bf71282bde8b6ff5ff1', nome_apto:'1401 Norte - Enjoy Residence',  qtd_hospedes_padrão:'2', qtd_hospedes_max:'3', cama_queen:'1', cama_casal:'0', cama_solteiro:'0', banheiros:'1' },
+  '699caf1811715db71e25151d': { listing_id:'699caf1811715db71e25151d', nome_apto:'1003 Sul - Enjoy Residence',    qtd_hospedes_padrão:'2', qtd_hospedes_max:'4', cama_queen:'1', cama_casal:'0', cama_solteiro:'0', banheiros:'1' },
+  '69813773d5a333a4535c7707': { listing_id:'69813773d5a333a4535c7707', nome_apto:'806 Sul - Enjoy Residence',     qtd_hospedes_padrão:'4', qtd_hospedes_max:'6', cama_queen:'1', cama_casal:'1', cama_solteiro:'0', banheiros:'2' },
+  '69c583ba4c589645828a2351': { listing_id:'69c583ba4c589645828a2351', nome_apto:'203 Sul - Enjoy Residence',     qtd_hospedes_padrão:'2', qtd_hospedes_max:'4', cama_queen:'0', cama_casal:'1', cama_solteiro:'0', banheiros:'1' }
+};
+
 async function init() {
   // Build checkboxes immediately from static list
   aptsList = APTS_STATIC;
   buildCheckboxes();
 
-  // Load full apt data from CSV in background
+  // Pre-load fallback data
+  for (var id in APTS_FALLBACK) aptMap[id] = APTS_FALLBACK[id];
+
+  // Enable button with fallback data
+  var btn = document.getElementById('btn-calcular');
+  btn.disabled = false;
+  btn.innerHTML = '&#128269; Calcular Enxoval';
+
+  // Try to load better data from CSV
   try {
     var csvR = await fetchProxy(CSV_URL);
     if (!csvR) return;
