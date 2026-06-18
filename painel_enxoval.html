@@ -314,14 +314,22 @@ function confirmModal() {
   if (modalResolve) modalResolve(selected);
 }
 
+function fetchWithTimeout(url, options, timeout) {
+  timeout = timeout || 8000;
+  return Promise.race([
+    fetch(url, options),
+    new Promise(function(_, reject) { setTimeout(function(){ reject(new Error('timeout')); }, timeout); })
+  ]);
+}
+
 async function fetchProxy(url, headers) {
   var px = ['https://corsproxy.io/?'+encodeURIComponent(url), 'https://api.allorigins.win/raw?url='+encodeURIComponent(url)];
   for (var i=0; i<px.length; i++) {
     try {
-      var r = await fetch(px[i], headers?{headers:headers}:{});
+      var r = await fetchWithTimeout(px[i], headers?{headers:headers}:{}, 8000);
       if (!r.ok) continue;
       return r;
-    } catch(e) {}
+    } catch(e) { continue; }
   }
   return null;
 }
@@ -329,10 +337,12 @@ async function fetchProxy(url, headers) {
 async function fetchReservations(from, to, dateType, listingId) {
   var url = 'https://'+DOMAIN+'/external/v1/booking/reservations?from='+from+'&to='+to+'&dateType='+dateType+'&limit=50';
   if (listingId) url += '&listingId='+listingId;
-  var r = await fetchProxy(url, {'Authorization': AUTH});
-  if (!r) return [];
-  var d = await r.json();
-  return Array.isArray(d) ? d : [];
+  try {
+    var r = await fetchProxy(url, {'Authorization': AUTH});
+    if (!r) return [];
+    var d = await r.json();
+    return Array.isArray(d) ? d : [];
+  } catch(e) { return []; }
 }
 
 function calcEnxovalBase(apt, guests) {
@@ -444,6 +454,12 @@ async function calcular() {
     var confirmedTotals = emptyTotals();
     var confirmedRows = '';
 
+    // Fetch all next reservations in parallel
+    var nextResPromises = checkouts.map(function(res) {
+      return fetchReservations(res.checkOutDate, addDays(res.checkOutDate, 90), 'arrival', res._idlisting);
+    });
+    var nextResResults = await Promise.all(nextResPromises);
+
     for (var i=0; i<checkouts.length; i++) {
       var res = checkouts[i];
       var apt = aptMap[res._idlisting];
@@ -451,7 +467,7 @@ async function calcular() {
 
       var hospedesPadrao = n(apt['qtd_hospedes_padrão']);
       var nextRes = null;
-      var nextReservations = await fetchReservations(res.checkOutDate, addDays(res.checkOutDate, 90), 'arrival', res._idlisting);
+      var nextReservations = nextResResults[i];
       nextReservations.sort(function(a,b){ return a.checkInDate > b.checkInDate ? 1 : -1; });
       if (nextReservations.length > 0) nextRes = nextReservations[0];
 
@@ -515,31 +531,56 @@ async function calcular() {
     var potentialToDate   = new Date(to + 'T12:00:00Z');
     var diffDays = (potentialToDate - potentialFromDate) / (1000 * 60 * 60 * 24);
 
+    // For each apt without checkout, find next arrival to determine free window
+    var potentialArrivalPromises = aptsWithoutCheckout.map(function(apt) {
+      return fetchReservations(potentialFrom, addDays(potentialFrom, 90), 'arrival', apt['listing_id']);
+    });
+    var potentialArrivalResults = await Promise.all(potentialArrivalPromises);
+
     for (var a=0; a<aptsWithoutCheckout.length; a++) {
       var apt = aptsWithoutCheckout[a];
-      if (diffDays < 2) continue; // not enough days for a 2-night stay
+      if (diffDays < 2) continue;
 
-      // Check if apt is free from today until end of period
-      var included = await fetchReservations(potentialFrom, to, 'included', apt['listing_id']);
-      var arrivals  = await fetchReservations(potentialFrom, to, 'arrival',   apt['listing_id']);
+      // Find next arrival for this apt
+      var nextArrivals = potentialArrivalResults[a];
+      nextArrivals.sort(function(a,b){ return a.checkInDate > b.checkInDate ? 1 : -1; });
 
-      // If no reservations included and no arrivals — apt is free and could receive reservation
-      if (included.length === 0 && arrivals.length === 0) {
-        // Get full apt data from aptMap (loaded from CSV)
-        var aptFull = aptMap[apt['listing_id']] || apt;
-        var hospedesPadrao = n(aptFull['qtd_hospedes_padrão']) || 2; // fallback to 2
-        var e = calcEnxovalBase(aptFull, hospedesPadrao);
-
-        for (var key in potentialTotals) potentialTotals[key] += e[key] || 0;
-
-        potentialRows += '<tr>' +
-          '<td class="apt-name-cell">'+apt['nome_apto']+'<span class="potential-badge">potencial</span></td>' +
-          '<td class="apt-date-cell" colspan="2">Livre no período</td>' +
-          '<td class="apt-date-cell">'+hospedesPadrao+' hósp.</td>' +
-          '<td><div class="items-list">'+buildItemTags(e, [], true)+'</div></td>' +
-          '<td><div class="items-list">'+buildTowelTags(e, true)+'</div></td>' +
-        '</tr>';
+      // Free window: from today until next arrival (or end of period)
+      var freeUntil = to;
+      if (nextArrivals.length > 0) {
+        freeUntil = addDays(nextArrivals[0].checkInDate, -1);
       }
+
+      // Check if free window is at least 2 days from today
+      var freeFromDate  = new Date(potentialFrom + 'T12:00:00Z');
+      var freeUntilDate = new Date(freeUntil + 'T12:00:00Z');
+      var freeDays = (freeUntilDate - freeFromDate) / (1000 * 60 * 60 * 24);
+
+      if (freeDays < 2) continue;
+
+      // Check if apt is currently occupied (included today)
+      var todayStr2 = new Date().toISOString().split('T')[0];
+      var includedToday = await fetchReservations(todayStr2, todayStr2, 'included', apt['listing_id']);
+      if (includedToday.length > 0) continue; // currently occupied
+
+      // Apt is free for at least 2 days — show as potential
+      var aptFull = aptMap[apt['listing_id']] || apt;
+      var hospedesPadrao = n(aptFull['qtd_hospedes_padrão']) || 2;
+      var e = calcEnxovalBase(aptFull, hospedesPadrao);
+
+      for (var key in potentialTotals) potentialTotals[key] += e[key] || 0;
+
+      var freeInfo = nextArrivals.length > 0
+        ? 'Livre até ' + fmt(freeUntil) + ' (' + Math.round(freeDays) + ' noites)'
+        : 'Livre no período';
+
+      potentialRows += '<tr>' +
+        '<td class="apt-name-cell">'+apt['nome_apto']+'<span class="potential-badge">potencial</span></td>' +
+        '<td class="apt-date-cell" colspan="2">'+freeInfo+'</td>' +
+        '<td class="apt-date-cell">'+hospedesPadrao+' hósp.</td>' +
+        '<td><div class="items-list">'+buildItemTags(e, [], true)+'</div></td>' +
+        '<td><div class="items-list">'+buildTowelTags(e, true)+'</div></td>' +
+      '</tr>';
     }
 
     // Build results HTML
