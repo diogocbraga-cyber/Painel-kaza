@@ -7,36 +7,21 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f1a; color: #fff; min-height: 100vh; padding: 1rem; }
-
   h1 { font-size: 20px; font-weight: 600; color: #e0e0e0; margin-bottom: 1rem; }
-
-  .filters {
-    background: #16213e; padding: 14px; border-radius: 10px;
-    border: 1px solid #222; margin-bottom: 1rem;
-  }
+  .filters { background: #16213e; padding: 14px; border-radius: 10px; border: 1px solid #222; margin-bottom: 1rem; }
   .filters-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 12px; }
   .filter-group { display: flex; flex-direction: column; gap: 4px; }
   .filter-group label { font-size: 12px; color: #888; }
-  .filter-group input[type=date] {
-    padding: 7px 10px; border-radius: 6px; border: 1px solid #333;
-    background: #0f0f1a; color: #fff; font-size: 14px; cursor: pointer;
-  }
+  .filter-group input[type=date] { padding: 7px 10px; border-radius: 6px; border: 1px solid #333; background: #0f0f1a; color: #fff; font-size: 14px; cursor: pointer; }
   .filter-group input[type=date]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
-
   .apts-filter { border-top: 1px solid #222; padding-top: 10px; }
   .apts-filter-label { font-size: 12px; color: #888; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
   .apts-checkboxes { display: flex; flex-wrap: wrap; gap: 8px; }
-  .apt-checkbox-label {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 13px; padding: 5px 10px; border-radius: 6px;
-    border: 1px solid #2a2a4a; background: #0f0f1a;
-    cursor: pointer; transition: all 0.2s; user-select: none;
-  }
+  .apt-checkbox-label { display: flex; align-items: center; gap: 6px; font-size: 13px; padding: 5px 10px; border-radius: 6px; border: 1px solid #2a2a4a; background: #0f0f1a; cursor: pointer; transition: all 0.2s; user-select: none; }
   .apt-checkbox-label:hover { border-color: #4a7adf; }
   .apt-checkbox-label.checked { background: #1a2a4a; border-color: #4a9eff; color: #7ab3ff; }
   .apt-checkbox-label input { display: none; }
   .apt-check-icon { font-size: 14px; }
-
   .btn-row { display: flex; gap: 8px; margin-top: 12px; }
   .btn { padding: 8px 20px; border-radius: 6px; border: none; background: #1e3a6e; color: #fff; font-size: 14px; cursor: pointer; }
   .btn:hover { background: #2a4f96; }
@@ -44,11 +29,8 @@
   .btn-print:hover { background: #256025; }
   .btn-select-all { background: #2a2a3a; font-size: 12px; padding: 4px 10px; border-radius: 4px; border: 1px solid #444; color: #aaa; cursor: pointer; }
   .btn-select-all:hover { background: #3a3a4a; color: #fff; }
-
   .loading { text-align: center; padding: 2rem; color: #aaa; display: none; }
   .error { background: #3a1010; color: #ff6b6b; padding: 10px 14px; border-radius: 8px; margin-bottom: 1rem; display: none; font-size: 14px; }
-
-  /* MODAL */
   .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; display: none; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
   .modal { background: #16213e; border: 1px solid #2a4a8e; border-radius: 12px; padding: 1.5rem; max-width: 480px; width: 90%; }
@@ -64,8 +46,6 @@
   .modal-actions { display: flex; gap: 8px; margin-top: 1rem; justify-content: flex-end; }
   .btn-cancel { background: #2a2a3a; }
   .btn-cancel:hover { background: #3a3a4a; }
-
-  /* RESULTS */
   .section { margin-bottom: 1.5rem; }
   .section h2 { font-size: 13px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
   .totals-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; margin-bottom: 1rem; }
@@ -73,7 +53,6 @@
   .total-card .val { font-size: 26px; font-weight: 700; color: #4a9eff; }
   .total-card .lbl { font-size: 11px; color: #888; margin-top: 2px; text-transform: uppercase; }
   .total-card.potential .val { color: #bb7aff; }
-
   .apt-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .apt-table th { background: #16213e; padding: 8px 10px; text-align: left; font-size: 11px; color: #888; text-transform: uppercase; border-bottom: 1px solid #222; }
   .apt-table td { padding: 8px 10px; border-bottom: 1px solid #1a1a2e; vertical-align: middle; }
@@ -89,9 +68,7 @@
   .item-tag.extra { background: #2a1a00; color: #ffb74a; }
   .item-tag.potential { background: #1a1a3a; color: #9a9aff; }
   .no-results { text-align: center; padding: 1.5rem; color: #555; font-size: 14px; }
-
   .section-divider { border: none; border-top: 1px solid #2a2a4a; margin: 1.5rem 0; }
-
   @media print {
     body { background: #fff; color: #000; padding: 0.5rem; }
     .filters, .no-print, .modal-overlay { display: none !important; }
@@ -129,7 +106,7 @@
 </div>
 
 <h1>&#128716; Enxoval por Período</h1>
-<div style="position:fixed;bottom:8px;right:12px;font-size:11px;color:#444;z-index:999;">v1.6</div>
+<div style="position:fixed;bottom:8px;right:12px;font-size:11px;color:#444;z-index:999;">v1.7</div>
 <div class="print-header" id="print-header"></div>
 
 <div class="filters no-print">
@@ -143,7 +120,6 @@
       <input type="date" id="date-to">
     </div>
   </div>
-
   <div class="apts-filter">
     <div class="apts-filter-label">
       Apartamentos incluídos:
@@ -151,7 +127,6 @@
     </div>
     <div class="apts-checkboxes" id="apts-checkboxes"></div>
   </div>
-
   <div class="btn-row">
     <button class="btn" id="btn-calcular" onclick="calcular()" disabled>&#9203; Carregando...</button>
     <button class="btn btn-print" onclick="imprimir()">&#128438; Imprimir</button>
@@ -188,10 +163,11 @@ var EXTRA_BEDS = {
 
 function calcKit(kitType) {
   switch(kitType) {
-    case 'solteiro':     return { elastico_solteiro:1, sem_elastico_solteiro:1, fronhas:1, toalhas_banho:1 };
-    case 'sofa_casal':   return { elastico_casal:1, sem_elastico_casal:1, fronhas:2, toalhas_banho:2 };
-    case 'sofa_queen':   return { elastico_queen:1, sem_elastico_queen:1, fronhas:2, toalhas_banho:2 };
-    case 'especial_1401': return { sem_elastico_solteiro:2, fronhas:1, toalhas_banho:1 };
+    // CORREÇÃO 3: sofa_queen usa 2x lençol queen sem elástico
+    case 'sofa_queen':    return { sem_elastico_queen:2, fronhas:2 };
+    case 'sofa_casal':    return { elastico_casal:1, sem_elastico_casal:1, fronhas:2 };
+    case 'solteiro':      return { elastico_solteiro:1, sem_elastico_solteiro:1, fronhas:1 };
+    case 'especial_1401': return { sem_elastico_solteiro:2, fronhas:1 };
     default: return {};
   }
 }
@@ -199,7 +175,6 @@ function calcKit(kitType) {
 var aptsList = [];
 var aptMap = {};
 
-// Set default dates (current month)
 var today = new Date();
 var firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
 var lastDay  = new Date(today.getFullYear(), today.getMonth()+1, 0);
@@ -245,40 +220,25 @@ function toggleApt(id) {
   var label = document.getElementById('cb-label-'+id);
   var cb = document.getElementById('cb-'+id);
   cb.checked = !cb.checked;
-  if (cb.checked) {
-    label.classList.add('checked');
-    label.querySelector('.apt-check-icon').textContent = '✓';
-  } else {
-    label.classList.remove('checked');
-    label.querySelector('.apt-check-icon').textContent = '○';
-  }
+  if (cb.checked) { label.classList.add('checked'); label.querySelector('.apt-check-icon').textContent = '✓'; }
+  else { label.classList.remove('checked'); label.querySelector('.apt-check-icon').textContent = '○'; }
 }
 
 function toggleAll() {
-  var allChecked = aptsList.every(function(apt) {
-    return document.getElementById('cb-'+apt['listing_id']).checked;
-  });
+  var allChecked = aptsList.every(function(apt) { return document.getElementById('cb-'+apt['listing_id']).checked; });
   aptsList.forEach(function(apt) {
     var cb = document.getElementById('cb-'+apt['listing_id']);
     var label = document.getElementById('cb-label-'+apt['listing_id']);
     cb.checked = !allChecked;
-    if (cb.checked) {
-      label.classList.add('checked');
-      label.querySelector('.apt-check-icon').textContent = '✓';
-    } else {
-      label.classList.remove('checked');
-      label.querySelector('.apt-check-icon').textContent = '○';
-    }
+    if (cb.checked) { label.classList.add('checked'); label.querySelector('.apt-check-icon').textContent = '✓'; }
+    else { label.classList.remove('checked'); label.querySelector('.apt-check-icon').textContent = '○'; }
   });
 }
 
 function getSelectedApts() {
-  return aptsList.filter(function(apt) {
-    return document.getElementById('cb-'+apt['listing_id']).checked;
-  });
+  return aptsList.filter(function(apt) { return document.getElementById('cb-'+apt['listing_id']).checked; });
 }
 
-// Modal
 var modalResolve = null;
 
 function showModal(res, apt, guests, hospedesPadrao) {
@@ -346,16 +306,15 @@ async function fetchReservations(from, to, dateType, listingId) {
   } catch(e) { return []; }
 }
 
-function calcEnxovalBase(apt, guests) {
+function calcEnxovalBase(apt) {
   var queen = n(apt['cama_queen']), casal = n(apt['cama_casal']), solteiro = n(apt['cama_solteiro']);
-  var banheiros = n(apt['banheiros']), hospedesPadrao = n(apt['qtd_hospedes_padrão']);
+  var banheiros = n(apt['banheiros']);
   return {
     elastico_queen: queen, elastico_casal: casal, elastico_solteiro: solteiro,
     sem_elastico_queen: queen, sem_elastico_casal: casal, sem_elastico_solteiro: solteiro,
     fronhas: (queen*2)+(casal*2)+(solteiro*1),
-    toalhas_banho: guests > hospedesPadrao ? guests : hospedesPadrao,
-    toalhas_rosto: banheiros,
-    extra: guests > hospedesPadrao
+    toalhas_banho: 0, // será calculado depois
+    toalhas_rosto: banheiros
   };
 }
 
@@ -367,7 +326,6 @@ function addKit(e, kit) {
   e.sem_elastico_casal    += kit.sem_elastico_casal || 0;
   e.sem_elastico_solteiro += kit.sem_elastico_solteiro || 0;
   e.fronhas               += kit.fronhas || 0;
-  e.toalhas_banho         += kit.toalhas_banho || 0;
   return e;
 }
 
@@ -432,22 +390,18 @@ async function calcular() {
     document.getElementById('error').style.display = 'block';
     return;
   }
-
   var selectedApts = getSelectedApts();
   if (selectedApts.length === 0) {
     document.getElementById('error').textContent = 'Selecione pelo menos um apartamento.';
     document.getElementById('error').style.display = 'block';
     return;
   }
-
   document.getElementById('error').style.display = 'none';
   document.getElementById('results').style.display = 'none';
   document.getElementById('loading').style.display = 'block';
 
   try {
-    // Get all checkouts in period
     var checkouts = await fetchReservations(from, to, 'departure');
-    // Filter by selected apts
     var selectedIds = selectedApts.map(function(a){ return a['listing_id']; });
     checkouts = checkouts.filter(function(r){ return selectedIds.indexOf(r._idlisting) >= 0; });
     checkouts.sort(function(a,b){ return a.checkOutDate > b.checkOutDate ? 1 : -1; });
@@ -455,7 +409,6 @@ async function calcular() {
     var confirmedTotals = emptyTotals();
     var confirmedRows = '';
 
-    // Fetch all next reservations in parallel
     var nextResPromises = checkouts.map(function(res) {
       return fetchReservations(res.checkOutDate, addDays(res.checkOutDate, 90), 'arrival', res._idlisting);
     });
@@ -476,9 +429,7 @@ async function calcular() {
       var isExtra = guestsNextRes > hospedesPadrao;
       var hasNext = nextRes !== null;
 
-      var e = calcEnxovalBase(apt, hospedesPadrao);
-      if (isExtra) e.toalhas_banho = guestsNextRes;
-
+      var e = calcEnxovalBase(apt);
       var extraConfig = EXTRA_BEDS[res._idlisting];
       var extraKitNames = [];
 
@@ -501,6 +452,9 @@ async function calcular() {
         }
       }
 
+      // CORREÇÃO 1: toalhas sempre = número de hóspedes (padrão ou extra)
+      e.toalhas_banho = guestsNextRes > hospedesPadrao ? guestsNextRes : hospedesPadrao;
+
       for (var key in confirmedTotals) confirmedTotals[key] += e[key] || 0;
 
       var nextInfo = hasNext ? fmt(nextRes.checkInDate) : 'Sem reserva<span class="no-res-badge">padrão</span>';
@@ -514,62 +468,53 @@ async function calcular() {
       '</tr>';
     }
 
-    // POTENTIAL — apts with no checkout but available for 2+ night reservation
     var potentialTotals = emptyTotals();
     var potentialRows = '';
 
-    // Find apts with no checkout in period
     var aptsWithCheckout = checkouts.map(function(r){ return r._idlisting; });
     var aptsWithoutCheckout = selectedApts.filter(function(apt) {
       return aptsWithCheckout.indexOf(apt['listing_id']) < 0;
     });
 
-    // Potential search starts from today, not from filter start date
     var todayStr = new Date().toISOString().split('T')[0];
     var potentialFrom = todayStr > from ? todayStr : from;
-    // Only show potential if there are at least 2 days between potentialFrom and 'to'
-    var potentialFromDate = new Date(potentialFrom + 'T12:00:00Z');
-    var potentialToDate   = new Date(to + 'T12:00:00Z');
-    var diffDays = (potentialToDate - potentialFromDate) / (1000 * 60 * 60 * 24);
 
-    // For each apt without checkout, find next arrival to determine free window
     var potentialArrivalPromises = aptsWithoutCheckout.map(function(apt) {
       return fetchReservations(potentialFrom, addDays(potentialFrom, 90), 'arrival', apt['listing_id']);
     });
-    var includedTodayPromises = aptsWithoutCheckout.map(function(apt) {
-      var todayStr2 = new Date().toISOString().split('T')[0];
-      return fetchReservations(todayStr2, todayStr2, 'included', apt['listing_id']);
+
+    // CORREÇÃO 2: verifica ocupação na data de início do filtro, não hoje
+    var includedAtFromPromises = aptsWithoutCheckout.map(function(apt) {
+      return fetchReservations(potentialFrom, potentialFrom, 'included', apt['listing_id']);
     });
+
     var potentialArrivalResults = await Promise.all(potentialArrivalPromises);
-    var includedTodayResults    = await Promise.all(includedTodayPromises);
+    var includedAtFromResults    = await Promise.all(includedAtFromPromises);
 
     for (var a=0; a<aptsWithoutCheckout.length; a++) {
       var apt = aptsWithoutCheckout[a];
 
-      // Skip if currently occupied
-      if (includedTodayResults[a].length > 0) continue;
+      // Pula se ocupado na data de início do filtro
+      if (includedAtFromResults[a].length > 0) continue;
 
-      // Find next arrival for this apt starting from today
       var nextArrivals = potentialArrivalResults[a];
       nextArrivals.sort(function(x,y){ return x.checkInDate > y.checkInDate ? 1 : -1; });
 
-      // Free window: from today until next checkin date (checkout can happen on same day as next checkin)
       var freeUntil = to;
       if (nextArrivals.length > 0 && nextArrivals[0].checkInDate <= to) {
         freeUntil = nextArrivals[0].checkInDate;
       }
 
-      // Check if free window is at least 2 days
       var freeFromDate  = new Date(potentialFrom + 'T12:00:00Z');
       var freeUntilDate = new Date(freeUntil + 'T12:00:00Z');
       var freeDays = (freeUntilDate - freeFromDate) / (1000 * 60 * 60 * 24);
 
       if (freeDays < 2) continue;
 
-      // Apt is free for at least 2 days — show as potential
       var aptFull = aptMap[apt['listing_id']] || apt;
       var hospedesPadrao = n(aptFull['qtd_hospedes_padrão']) || 2;
-      var e = calcEnxovalBase(aptFull, hospedesPadrao);
+      var e = calcEnxovalBase(aptFull);
+      e.toalhas_banho = hospedesPadrao;
 
       for (var key in potentialTotals) potentialTotals[key] += e[key] || 0;
 
@@ -586,10 +531,7 @@ async function calcular() {
       '</tr>';
     }
 
-    // Build results HTML
     var html = '';
-
-    // CONFIRMED SECTION
     html += '<div class="section">';
     html += '<h2>&#129523; Total Confirmado</h2>';
     html += '<div class="totals-grid">'+buildTotalsHTML(confirmedTotals, false)+'</div>';
@@ -598,7 +540,6 @@ async function calcular() {
     html += confirmedRows || '<tr><td colspan="6" class="no-results">Nenhum check-out confirmado no período.</td></tr>';
     html += '</tbody></table></div>';
 
-    // POTENTIAL SECTION
     if (potentialRows !== '') {
       html += '<hr class="section-divider">';
       html += '<div class="section">';
@@ -622,7 +563,6 @@ async function calcular() {
   }
 }
 
-// Apartments hardcoded for checkboxes (no CSV dependency)
 var APTS_STATIC = [
   { listing_id: '671d529a8796a56f531629bb', nome_apto: 'Wave 1202 Norte' },
   { listing_id: '671d531f8796a56f531636bb', nome_apto: 'Ilha de Paros 404' },
@@ -633,31 +573,23 @@ var APTS_STATIC = [
   { listing_id: '69c583ba4c589645828a2351', nome_apto: 'Enjoy 203 Sul' }
 ];
 
-// Fallback apt data in case CSV fails
 var APTS_FALLBACK = {
-  '671d529a8796a56f531629bb': { listing_id:'671d529a8796a56f531629bb', nome_apto:'1202 N - Wave Itapoã',          qtd_hospedes_padrão:'2', qtd_hospedes_max:'4', cama_queen:'0', cama_casal:'1', cama_solteiro:'0', banheiros:'1' },
-  '671d531f8796a56f531636bb': { listing_id:'671d531f8796a56f531636bb', nome_apto:'404 - Ilha de Paros',           qtd_hospedes_padrão:'4', qtd_hospedes_max:'6', cama_queen:'0', cama_casal:'2', cama_solteiro:'0', banheiros:'2' },
-  '67578f32e313eeaba1c28d5e': { listing_id:'67578f32e313eeaba1c28d5e', nome_apto:'1306 Norte - Enjoy Residence',  qtd_hospedes_padrão:'4', qtd_hospedes_max:'6', cama_queen:'0', cama_casal:'2', cama_solteiro:'0', banheiros:'2' },
-  '68433bf71282bde8b6ff5ff1': { listing_id:'68433bf71282bde8b6ff5ff1', nome_apto:'1401 Norte - Enjoy Residence',  qtd_hospedes_padrão:'2', qtd_hospedes_max:'3', cama_queen:'1', cama_casal:'0', cama_solteiro:'0', banheiros:'1' },
-  '699caf1811715db71e25151d': { listing_id:'699caf1811715db71e25151d', nome_apto:'1003 Sul - Enjoy Residence',    qtd_hospedes_padrão:'2', qtd_hospedes_max:'4', cama_queen:'1', cama_casal:'0', cama_solteiro:'0', banheiros:'1' },
-  '69813773d5a333a4535c7707': { listing_id:'69813773d5a333a4535c7707', nome_apto:'806 Sul - Enjoy Residence',     qtd_hospedes_padrão:'4', qtd_hospedes_max:'6', cama_queen:'1', cama_casal:'1', cama_solteiro:'0', banheiros:'2' },
-  '69c583ba4c589645828a2351': { listing_id:'69c583ba4c589645828a2351', nome_apto:'203 Sul - Enjoy Residence',     qtd_hospedes_padrão:'2', qtd_hospedes_max:'4', cama_queen:'0', cama_casal:'1', cama_solteiro:'0', banheiros:'1' }
+  '671d529a8796a56f531629bb': { listing_id:'671d529a8796a56f531629bb', nome_apto:'1202 N - Wave Itapoã',         qtd_hospedes_padrão:'2', qtd_hospedes_max:'4', cama_queen:'0', cama_casal:'1', cama_solteiro:'0', banheiros:'1' },
+  '671d531f8796a56f531636bb': { listing_id:'671d531f8796a56f531636bb', nome_apto:'404 - Ilha de Paros',          qtd_hospedes_padrão:'4', qtd_hospedes_max:'6', cama_queen:'0', cama_casal:'2', cama_solteiro:'0', banheiros:'2' },
+  '67578f32e313eeaba1c28d5e': { listing_id:'67578f32e313eeaba1c28d5e', nome_apto:'1306 Norte - Enjoy Residence', qtd_hospedes_padrão:'4', qtd_hospedes_max:'6', cama_queen:'0', cama_casal:'2', cama_solteiro:'0', banheiros:'2' },
+  '68433bf71282bde8b6ff5ff1': { listing_id:'68433bf71282bde8b6ff5ff1', nome_apto:'1401 Norte - Enjoy Residence', qtd_hospedes_padrão:'2', qtd_hospedes_max:'3', cama_queen:'1', cama_casal:'0', cama_solteiro:'0', banheiros:'1' },
+  '699caf1811715db71e25151d': { listing_id:'699caf1811715db71e25151d', nome_apto:'1003 Sul - Enjoy Residence',   qtd_hospedes_padrão:'2', qtd_hospedes_max:'4', cama_queen:'1', cama_casal:'0', cama_solteiro:'0', banheiros:'1' },
+  '69813773d5a333a4535c7707': { listing_id:'69813773d5a333a4535c7707', nome_apto:'806 Sul - Enjoy Residence',    qtd_hospedes_padrão:'4', qtd_hospedes_max:'6', cama_queen:'1', cama_casal:'1', cama_solteiro:'0', banheiros:'2' },
+  '69c583ba4c589645828a2351': { listing_id:'69c583ba4c589645828a2351', nome_apto:'203 Sul - Enjoy Residence',    qtd_hospedes_padrão:'2', qtd_hospedes_max:'4', cama_queen:'0', cama_casal:'1', cama_solteiro:'0', banheiros:'1' }
 };
 
 async function init() {
-  // Build checkboxes immediately from static list
   aptsList = APTS_STATIC;
   buildCheckboxes();
-
-  // Pre-load fallback data
   for (var id in APTS_FALLBACK) aptMap[id] = APTS_FALLBACK[id];
-
-  // Enable button with fallback data
   var btn = document.getElementById('btn-calcular');
   btn.disabled = false;
   btn.innerHTML = '&#128269; Calcular Enxoval';
-
-  // Try to load better data from CSV
   try {
     var csvR = await fetchProxy(CSV_URL);
     if (!csvR) return;
