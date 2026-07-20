@@ -106,7 +106,7 @@
 </div>
 
 <h1>&#128716; Enxoval por Período</h1>
-<div style="position:fixed;bottom:8px;right:12px;font-size:11px;color:#444;z-index:999;">v1.7</div>
+<div style="position:fixed;bottom:8px;right:12px;font-size:11px;color:#444;z-index:999;">v1.8</div>
 <div class="print-header" id="print-header"></div>
 
 <div class="filters no-print">
@@ -479,25 +479,33 @@ async function calcular() {
     var todayStr = new Date().toISOString().split('T')[0];
     var potentialFrom = todayStr > from ? todayStr : from;
 
-    var potentialArrivalPromises = aptsWithoutCheckout.map(function(apt) {
+    // CORREÇÃO v1.8: inclui aptos com checkout no período para verificar vago após checkout
+    var potentialArrivalPromises = selectedApts.map(function(apt) {
       return fetchReservations(potentialFrom, addDays(potentialFrom, 90), 'arrival', apt['listing_id']);
     });
 
-    // CORREÇÃO 2: verifica ocupação na data de início do filtro, não hoje
-    var includedAtFromPromises = aptsWithoutCheckout.map(function(apt) {
+    var includedAtFromPromises = selectedApts.map(function(apt) {
       return fetchReservations(potentialFrom, potentialFrom, 'included', apt['listing_id']);
     });
 
     var potentialArrivalResults = await Promise.all(potentialArrivalPromises);
     var includedAtFromResults    = await Promise.all(includedAtFromPromises);
 
-    for (var a=0; a<aptsWithoutCheckout.length; a++) {
-      var apt = aptsWithoutCheckout[a];
+    for (var a=0; a<selectedApts.length; a++) {
+      var apt = selectedApts[a];
 
       // Pula se ocupado na data de início do filtro
       if (includedAtFromResults[a].length > 0) continue;
 
-      var nextArrivals = potentialArrivalResults[a];
+      // Se tem checkout no período, o vago começa após o checkout
+      var checkoutDoApto = checkouts.find(function(r) {
+        return r._idlisting === apt['listing_id'];
+      });
+      var vagaFrom = checkoutDoApto ? checkoutDoApto.checkOutDate : potentialFrom;
+
+      var nextArrivals = potentialArrivalResults[a].filter(function(r) {
+        return r.checkInDate > vagaFrom;
+      });
       nextArrivals.sort(function(x,y){ return x.checkInDate > y.checkInDate ? 1 : -1; });
 
       var freeUntil = to;
@@ -505,7 +513,7 @@ async function calcular() {
         freeUntil = nextArrivals[0].checkInDate;
       }
 
-      var freeFromDate  = new Date(potentialFrom + 'T12:00:00Z');
+      var freeFromDate  = new Date(vagaFrom + 'T12:00:00Z');
       var freeUntilDate = new Date(freeUntil + 'T12:00:00Z');
       var freeDays = (freeUntilDate - freeFromDate) / (1000 * 60 * 60 * 24);
 
