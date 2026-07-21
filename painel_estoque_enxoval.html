@@ -125,6 +125,17 @@ var activeLocs = {};
 
 function parseCSV(text) {
   var lines = text.trim().split('\n');
+  // pula linhas de título/branco antes do cabeçalho real (ex: aba Estoque_Saldo
+  // tem uma linha de título na linha 1 antes do cabeçalho codigo,nome,...)
+  var startIdx = 0;
+  for (var k = 0; k < lines.length; k++) {
+    var firstCell = lines[k].split(',')[0].trim().replace(/"/g,'').toLowerCase();
+    if (firstCell === 'codigo' || firstCell === 'codigo_local' || firstCell === 'item_id' || firstCell === 'kit_id') {
+      startIdx = k;
+      break;
+    }
+  }
+  lines = lines.slice(startIdx);
   var headers = lines[0].split(',').map(function(h){ return h.trim().replace(/"/g,''); });
   var result = [];
   for (var i=1; i<lines.length; i++) {
@@ -146,12 +157,17 @@ function fetchWithTimeout(url, timeout) {
 }
 
 async function fetchCSV(url) {
-  var proxies = ['https://corsproxy.io/?'+encodeURIComponent(url), 'https://api.allorigins.win/raw?url='+encodeURIComponent(url)];
+  var proxies = [
+    'https://corsproxy.io/?'+encodeURIComponent(url),
+    'https://api.allorigins.win/raw?url='+encodeURIComponent(url),
+    'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(url)
+  ];
   for (var i=0; i<proxies.length; i++) {
     try {
-      var r = await fetchWithTimeout(proxies[i], 8000);
+      var r = await fetchWithTimeout(proxies[i], 12000);
       if (!r.ok) continue;
       var text = await r.text();
+      if (!text || text.indexOf('<html') !== -1) continue;
       return parseCSV(text);
     } catch(e) { continue; }
   }
