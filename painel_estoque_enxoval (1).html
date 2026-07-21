@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estoque de Enxoval - Kaza Capixaba</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f1a; color: #fff; min-height: 100vh; padding: 1rem; }
+  h1 { font-size: 20px; font-weight: 600; color: #e0e0e0; margin-bottom: 1rem; }
+  h2 { font-size: 13px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .setup-banner { background: #3a2000; border: 1px solid #6a4a00; color: #ffb74a; padding: 12px 16px; border-radius: 8px; margin-bottom: 1rem; font-size: 13px; line-height: 1.5; display: none; }
+  .setup-banner code { background: #1a1200; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+  .filters { background: #16213e; padding: 14px; border-radius: 10px; border: 1px solid #222; margin-bottom: 1rem; }
+  .filters-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .filter-group { display: flex; flex-direction: column; gap: 4px; }
+  .filter-group label { font-size: 12px; color: #888; }
+  .filter-group input[type=text] { padding: 7px 10px; border-radius: 6px; border: 1px solid #333; background: #0f0f1a; color: #fff; font-size: 14px; min-width: 220px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .tab-btn { padding: 8px 16px; border-radius: 6px; border: 1px solid #2a2a4a; background: #16213e; color: #aaa; font-size: 13px; cursor: pointer; }
+  .tab-btn.active { background: #1e3a6e; color: #fff; border-color: #4a7adf; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .loc-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .loc-chip { font-size: 12px; padding: 5px 10px; border-radius: 6px; border: 1px solid #2a2a4a; background: #0f0f1a; cursor: pointer; user-select: none; color: #aaa; }
+  .loc-chip:hover { border-color: #4a7adf; }
+  .loc-chip.active { background: #1a2a4a; border-color: #4a9eff; color: #7ab3ff; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: #16213e; padding: 8px 10px; text-align: left; font-size: 11px; color: #888; text-transform: uppercase; border-bottom: 1px solid #222; position: sticky; top: 0; }
+  td { padding: 7px 10px; border-bottom: 1px solid #1a1a2e; vertical-align: middle; white-space: nowrap; }
+  tr:hover td { background: #16213e; }
+  .name-cell { font-weight: 600; color: #ddd; white-space: normal; min-width: 160px; }
+  .cat-badge { font-size: 10px; padding: 1px 6px; border-radius: 4px; background: #1a2a3a; color: #7ab3ff; margin-left: 6px; }
+  .cat-badge.toalha { background: #1a2a1a; color: #7aff9a; }
+  .cat-badge.kit { background: #2a1a3a; color: #bb7aff; }
+  .qty { text-align: center; font-weight: 600; }
+  .qty.zero { color: #444; font-weight: 400; }
+  .qty.neg { color: #ff6b6b; font-weight: 700; }
+  .table-scroll { overflow-x: auto; background: #16213e; border-radius: 10px; border: 1px solid #222; }
+  .kit-group { background: #16213e; border: 1px solid #222; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+  .kit-group .kit-title { font-weight: 600; font-size: 14px; color: #e0e0e0; margin-bottom: 6px; }
+  .kit-items { display: flex; flex-wrap: wrap; gap: 6px; }
+  .kit-item-tag { font-size: 12px; padding: 3px 9px; border-radius: 4px; background: #1a2a3a; color: #7ab3ff; }
+  .loading { text-align: center; padding: 2rem; color: #aaa; }
+  .error { background: #3a1010; color: #ff6b6b; padding: 10px 14px; border-radius: 8px; margin-bottom: 1rem; display: none; font-size: 14px; }
+  .no-results { text-align: center; padding: 1.5rem; color: #555; font-size: 14px; }
+  .updated-at { font-size: 11px; color: #666; margin-top: 8px; text-align: right; }
+</style>
+</head>
+<body>
+
+<h1>&#128716; Estoque de Enxoval &mdash; Kaza Capixaba</h1>
+<div style="position:fixed;bottom:8px;right:12px;font-size:11px;color:#444;z-index:999;">painel de estoque &middot; módulo 1</div>
+
+<div id="setup-banner" class="setup-banner">
+  <strong>Configuração pendente:</strong> este painel lê 4 abas publicadas da planilha
+  <code>Kaza_Enxoval_Controle.xlsx</code> (Locais, Itens_Catalogo, Kits_Catalogo, Estoque_Saldo).
+  Publique cada aba em <em>Arquivo &rarr; Compartilhar &rarr; Publicar na web &rarr; CSV</em> e cole os links
+  nas constantes <code>LOCAIS_CSV_URL</code>, <code>ITENS_CSV_URL</code>, <code>KITS_CSV_URL</code> e <code>SALDO_CSV_URL</code>
+  no início do script deste arquivo — o mesmo padrão já usado no painel_enxoval.html atual.
+</div>
+
+<div id="error" class="error"></div>
+<div id="loading" class="loading">Carregando dados da planilha...</div>
+
+<div id="app" style="display:none;">
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('saldo')" id="tabbtn-saldo">Saldo Atual</button>
+    <button class="tab-btn" onclick="showTab('itens')" id="tabbtn-itens">Catálogo de Itens</button>
+    <button class="tab-btn" onclick="showTab('kits')" id="tabbtn-kits">Catálogo de Kits</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-saldo">
+    <div class="filters">
+      <div class="filters-row">
+        <div class="filter-group">
+          <label>Buscar item/kit</label>
+          <input type="text" id="saldo-search" oninput="renderSaldo()" placeholder="ex: lençol, toalha, kit casal...">
+        </div>
+      </div>
+      <div class="filters-row" style="margin-top:10px;">
+        <div class="filter-group" style="width:100%;">
+          <label>Locais exibidos (clique para alternar)</label>
+          <div class="loc-chips" id="loc-chips"></div>
+        </div>
+      </div>
+    </div>
+    <h2>Saldo por local</h2>
+    <div class="table-scroll"><table id="saldo-table"></table></div>
+    <div class="updated-at" id="saldo-updated"></div>
+  </div>
+
+  <div class="tab-panel" id="tab-itens">
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Código</th><th>Item</th><th>Categoria</th></tr></thead>
+        <tbody id="itens-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-kits">
+    <div id="kits-container"></div>
+  </div>
+
+</div>
+
+<script>
+// ===================== CONFIGURAÇÃO =====================
+// Publique cada aba da planilha (Arquivo > Compartilhar > Publicar na web > CSV)
+// e cole os links abaixo. Mesmo padrão do painel_enxoval.html atual.
+var LOCAIS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTbIdcTxBz9dBkumknqVWdlOgYUjyo3qXK4W17leY1douCKc5JjamQFxL-Uo8NYfg/pub?gid=870641717&single=true&output=csv';
+var ITENS_CSV_URL  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTbIdcTxBz9dBkumknqVWdlOgYUjyo3qXK4W17leY1douCKc5JjamQFxL-Uo8NYfg/pub?gid=374121208&single=true&output=csv';
+var KITS_CSV_URL   = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTbIdcTxBz9dBkumknqVWdlOgYUjyo3qXK4W17leY1douCKc5JjamQFxL-Uo8NYfg/pub?gid=249450546&single=true&output=csv';
+var SALDO_CSV_URL  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTbIdcTxBz9dBkumknqVWdlOgYUjyo3qXK4W17leY1douCKc5JjamQFxL-Uo8NYfg/pub?gid=181657139&single=true&output=csv';
+// ==========================================================
+
+var locais = [];
+var itens = [];
+var kits = [];
+var saldoRows = [];
+var saldoLocCols = [];
+var activeLocs = {};
+
+function parseCSV(text) {
+  var lines = text.trim().split('\n');
+  // pula linhas de título/branco antes do cabeçalho real (ex: aba Estoque_Saldo
+  // tem uma linha de título na linha 1 antes do cabeçalho codigo,nome,...)
+  var startIdx = 0;
+  for (var k = 0; k < lines.length; k++) {
+    var firstCell = lines[k].split(',')[0].trim().replace(/"/g,'').toLowerCase();
+    if (firstCell === 'codigo' || firstCell === 'codigo_local' || firstCell === 'item_id' || firstCell === 'kit_id') {
+      startIdx = k;
+      break;
+    }
+  }
+  lines = lines.slice(startIdx);
+  var headers = lines[0].split(',').map(function(h){ return h.trim().replace(/"/g,''); });
+  var result = [];
+  for (var i=1; i<lines.length; i++) {
+    if (!lines[i].trim()) continue;
+    var vals = lines[i].split(',').map(function(v){ return v.trim().replace(/"/g,''); });
+    var obj = {};
+    for (var j=0; j<headers.length; j++) obj[headers[j]] = vals[j] !== undefined ? vals[j] : '';
+    result.push(obj);
+  }
+  return { headers: headers, rows: result };
+}
+
+function fetchWithTimeout(url, timeout) {
+  timeout = timeout || 8000;
+  return Promise.race([
+    fetch(url),
+    new Promise(function(_, reject) { setTimeout(function(){ reject(new Error('timeout')); }, timeout); })
+  ]);
+}
+
+async function fetchCSV(url) {
+  var proxies = [
+    'https://corsproxy.io/?'+encodeURIComponent(url),
+    'https://api.allorigins.win/raw?url='+encodeURIComponent(url),
+    'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(url)
+  ];
+  for (var i=0; i<proxies.length; i++) {
+    try {
+      var r = await fetchWithTimeout(proxies[i], 12000);
+      if (!r.ok) continue;
+      var text = await r.text();
+      if (!text || text.indexOf('<html') !== -1) continue;
+      return parseCSV(text);
+    } catch(e) { continue; }
+  }
+  throw new Error('Não foi possível carregar: ' + url);
+}
+
+function isConfigured() {
+  return LOCAIS_CSV_URL.indexOf('COLE_AQUI') === -1 &&
+         ITENS_CSV_URL.indexOf('COLE_AQUI') === -1 &&
+         KITS_CSV_URL.indexOf('COLE_AQUI') === -1 &&
+         SALDO_CSV_URL.indexOf('COLE_AQUI') === -1;
+}
+
+function showTab(name) {
+  ['saldo','itens','kits'].forEach(function(t) {
+    document.getElementById('tab-'+t).classList.toggle('active', t === name);
+    document.getElementById('tabbtn-'+t).classList.toggle('active', t === name);
+  });
+}
+
+function renderLocChips() {
+  var container = document.getElementById('loc-chips');
+  var html = '';
+  saldoLocCols.forEach(function(loc) {
+    var locInfo = locais.find(function(l){ return l.codigo_local === loc; });
+    var label = locInfo ? locInfo.nome_exibicao : loc;
+    var isActive = activeLocs[loc];
+    html += '<span class="loc-chip'+(isActive?' active':'')+'" onclick="toggleLoc(\''+loc+'\')">'+label+'</span>';
+  });
+  container.innerHTML = html;
+}
+
+function toggleLoc(loc) {
+  activeLocs[loc] = !activeLocs[loc];
+  renderLocChips();
+  renderSaldo();
+}
+
+function renderSaldo() {
+  var search = document.getElementById('saldo-search').value.toLowerCase();
+  var visibleLocs = saldoLocCols.filter(function(l){ return activeLocs[l]; });
+
+  var html = '<thead><tr><th>Código</th><th>Nome</th>';
+  visibleLocs.forEach(function(loc) {
+    var locInfo = locais.find(function(l){ return l.codigo_local === loc; });
+    html += '<th>'+(locInfo ? locInfo.nome_exibicao : loc)+'</th>';
+  });
+  html += '</tr></thead><tbody>';
+
+  var anyRow = false;
+  saldoRows.forEach(function(row) {
+    var nome = (row.nome || '').toLowerCase();
+    var codigo = (row.codigo || '').toLowerCase();
+    if (search && nome.indexOf(search) === -1 && codigo.indexOf(search) === -1) return;
+    anyRow = true;
+    var isKit = row.codigo && row.codigo.indexOf('KIT') === 0;
+    html += '<tr><td>'+row.codigo+'</td><td class="name-cell">'+row.nome+
+      (isKit ? '<span class="cat-badge kit">kit</span>' : '')+'</td>';
+    visibleLocs.forEach(function(loc) {
+      var v = parseInt(row[loc]) || 0;
+      var cls = v === 0 ? 'qty zero' : (v < 0 ? 'qty neg' : 'qty');
+      html += '<td class="'+cls+'">'+v+'</td>';
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+
+  if (!anyRow) {
+    html = '<tbody><tr><td class="no-results">Nenhum item/kit encontrado.</td></tr></tbody>';
+  }
+
+  document.getElementById('saldo-table').innerHTML = html;
+}
+
+function renderItens() {
+  var catClass = { roupa_cama: '', toalha: 'toalha' };
+  var html = '';
+  itens.forEach(function(it) {
+    html += '<tr><td>'+it.item_id+'</td><td class="name-cell">'+it.nome_item+'</td>' +
+      '<td><span class="cat-badge '+(catClass[it.categoria]||'')+'">'+it.categoria+'</span></td></tr>';
+  });
+  document.getElementById('itens-tbody').innerHTML = html || '<tr><td colspan="3" class="no-results">Sem itens cadastrados.</td></tr>';
+}
+
+function renderKits() {
+  var grouped = {};
+  var order = [];
+  kits.forEach(function(k) {
+    if (!grouped[k.kit_id]) { grouped[k.kit_id] = { nome: k.nome_kit, itens: [] }; order.push(k.kit_id); }
+    grouped[k.kit_id].itens.push(k);
+  });
+  var html = '';
+  order.forEach(function(kitId) {
+    var g = grouped[kitId];
+    html += '<div class="kit-group"><div class="kit-title">'+g.nome+' <span class="cat-badge kit">'+kitId+'</span></div><div class="kit-items">';
+    g.itens.forEach(function(it) {
+      html += '<span class="kit-item-tag">'+it.qtd_no_kit+'x '+(it['nome_item (ref)'] || it.item_id)+'</span>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('kits-container').innerHTML = html || '<div class="no-results">Sem kits cadastrados.</div>';
+}
+
+async function init() {
+  if (!isConfigured()) {
+    document.getElementById('setup-banner').style.display = 'block';
+    document.getElementById('loading').style.display = 'none';
+    return;
+  }
+  try {
+    var results = await Promise.all([
+      fetchCSV(LOCAIS_CSV_URL),
+      fetchCSV(ITENS_CSV_URL),
+      fetchCSV(KITS_CSV_URL),
+      fetchCSV(SALDO_CSV_URL)
+    ]);
+    locais = results[0].rows;
+    itens  = results[1].rows;
+    kits   = results[2].rows;
+    var saldoParsed = results[3];
+    saldoRows = saldoParsed.rows;
+    saldoLocCols = saldoParsed.headers.filter(function(h){ return h !== 'codigo' && h !== 'nome'; });
+    saldoLocCols.forEach(function(l){ activeLocs[l] = true; });
+
+    renderLocChips();
+    renderSaldo();
+    renderItens();
+    renderKits();
+
+    document.getElementById('saldo-updated').textContent = 'Atualizado em ' + new Date().toLocaleString('pt-BR');
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+  } catch(err) {
+    document.getElementById('error').textContent = 'Erro ao carregar dados: ' + err.message;
+    document.getElementById('error').style.display = 'block';
+    document.getElementById('loading').style.display = 'none';
+  }
+}
+
+init();
+</script>
+</body>
+</html>
