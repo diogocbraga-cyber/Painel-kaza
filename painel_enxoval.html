@@ -106,7 +106,7 @@
 </div>
 
 <h1>&#128716; Enxoval por Período</h1>
-<div style="position:fixed;bottom:8px;right:12px;font-size:11px;color:#444;z-index:999;">v2.0</div>
+<div style="position:fixed;bottom:8px;right:12px;font-size:11px;color:#444;z-index:999;">v2.1</div>
 <div class="print-header" id="print-header"></div>
 
 <div class="filters no-print">
@@ -479,7 +479,7 @@ async function calcular() {
     var todayStr = new Date().toISOString().split('T')[0];
     var potentialFrom = todayStr > from ? todayStr : from;
 
-    // CORREÇÃO v2.0: inclui aptos com checkout no período para verificar vago após checkout
+    // CORREÇÃO v2.1: inclui aptos com checkout no período para verificar vago após checkout
     var potentialArrivalPromises = selectedApts.map(function(apt) {
       return fetchReservations(potentialFrom, addDays(potentialFrom, 90), 'arrival', apt['listing_id']);
     });
@@ -505,7 +505,7 @@ async function calcular() {
       var vagaFrom = checkoutDoApto ? checkoutDoApto.checkOutDate : potentialFrom;
 
       var nextArrivals = potentialArrivalResults[a].filter(function(r) {
-        return r.checkInDate > vagaFrom;
+        return r.checkInDate >= vagaFrom;
       });
       nextArrivals.sort(function(x,y){ return x.checkInDate > y.checkInDate ? 1 : -1; });
 
@@ -518,7 +518,7 @@ async function calcular() {
       var freeUntilDate = new Date(freeUntil + 'T12:00:00Z');
       var freeDays = (freeUntilDate - freeFromDate) / (1000 * 60 * 60 * 24);
 
-      if (freeDays <= 1) continue;
+      if (freeDays < 2) continue;
 
       var aptFull = aptMap[apt['listing_id']] || apt;
       var hospedesPadrao = n(aptFull['qtd_hospedes_padrão']) || 2;
