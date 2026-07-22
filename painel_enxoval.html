@@ -106,7 +106,7 @@
 </div>
 
 <h1>&#128716; Enxoval por Período</h1>
-<div style="position:fixed;bottom:8px;right:12px;font-size:11px;color:#444;z-index:999;">v1.8</div>
+<div style="position:fixed;bottom:8px;right:12px;font-size:11px;color:#444;z-index:999;">v1.9</div>
 <div class="print-header" id="print-header"></div>
 
 <div class="filters no-print">
@@ -479,7 +479,7 @@ async function calcular() {
     var todayStr = new Date().toISOString().split('T')[0];
     var potentialFrom = todayStr > from ? todayStr : from;
 
-    // CORREÇÃO v1.8: inclui aptos com checkout no período para verificar vago após checkout
+    // CORREÇÃO v1.9: inclui aptos com checkout no período para verificar vago após checkout
     var potentialArrivalPromises = selectedApts.map(function(apt) {
       return fetchReservations(potentialFrom, addDays(potentialFrom, 90), 'arrival', apt['listing_id']);
     });
@@ -494,13 +494,14 @@ async function calcular() {
     for (var a=0; a<selectedApts.length; a++) {
       var apt = selectedApts[a];
 
-      // Pula se ocupado na data de início do filtro
-      if (includedAtFromResults[a].length > 0) continue;
-
       // Se tem checkout no período, o vago começa após o checkout
       var checkoutDoApto = checkouts.find(function(r) {
         return r._idlisting === apt['listing_id'];
       });
+
+      // Pula se ocupado no início do filtro E não tem checkout no período
+      if (includedAtFromResults[a].length > 0 && !checkoutDoApto) continue;
+
       var vagaFrom = checkoutDoApto ? checkoutDoApto.checkOutDate : potentialFrom;
 
       var nextArrivals = potentialArrivalResults[a].filter(function(r) {
