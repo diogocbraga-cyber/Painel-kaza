@@ -161,7 +161,7 @@ function dname(s) {
 function shift(n){ offset+=n; loadData(); }
 
 async function get(url) {
-  var px=['https://corsproxy.io/?'+encodeURIComponent(url),'https://api.allorigins.win/raw?url='+encodeURIComponent(url)];
+  var px=['https://api.allorigins.win/raw?url='+encodeURIComponent(url),'https://corsproxy.io/?'+encodeURIComponent(url),'https://thingproxy.freeboard.io/fetch/'+encodeURIComponent(url)];
   for(var i=0;i<px.length;i++){
     try{
       var r=await fetch(px[i],{headers:{'Authorization':AUTH}});
