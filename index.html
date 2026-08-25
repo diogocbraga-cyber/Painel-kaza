@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -161,7 +161,7 @@ function dname(s) {
 function shift(n){ offset+=n; loadData(); }
 
 async function get(url) {
-  var px=['https://stays-proxy.kazacapixaba.com.br'+url];
+  var px=['https://stays-proxy.kazacapixaba.com.br'+url.replace('https://dccb.stays.net','')];
   for(var i=0;i<px.length;i++){
     try{
       var r=await fetch(px[i],{headers:{'Authorization':AUTH}});
